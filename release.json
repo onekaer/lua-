@@ -1,0 +1,6 @@
+{
+  "version": "1.9.0",
+  "base_package": "https://github.com/onekaer/lua-/releases/download/base-v1.9.0/LUA-1.9-Windows-x64.zip",
+  "base_sha256": "eac4d41b7cf367256902b9efc4e779843ec25a1bbc95fabc03c97b6ad8925810",
+  "notes": "Temperatura real da CPU com PawnIO e assistente separado. Espaço livre menor, Início sem rolagem no tamanho padrão. Página de apresentação e atualizações oficiais no GitHub. Veja LEIA-ME.md e VALIDACAO.md para instruções e limites."
+}

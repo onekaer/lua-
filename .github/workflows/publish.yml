@@ -1,0 +1,49 @@
+name: Publicar LUA e atualizar página
+on:
+  push:
+    branches: [main]
+    paths: ['lua-source.zip', 'release.json', 'tools/**', '.github/workflows/**']
+  workflow_dispatch:
+concurrency:
+  group: lua-publication
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - name: Compilar, conferir e publicar uma versão nova
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./tools/build-release.ps1
+  page:
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Preparar a página e os links da versão publicada
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          unzip -q lua-source.zip -d packaged
+          gh release view --repo "$GITHUB_REPOSITORY" --json tagName,assets,publishedAt > published-release.json
+          python tools/prepare-site.py packaged/site published-release.json
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: packaged/site
+      - name: Publicar página
+        id: deploy
+        uses: actions/deploy-pages@v4
