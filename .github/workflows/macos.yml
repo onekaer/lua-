@@ -2,7 +2,7 @@ name: Compilar e testar LUA para macOS
 on:
   push:
     branches: [main]
-    paths: ['lua-source.zip', 'mac-release.json', '.github/workflows/macos.yml', 'tools/package-macos.py']
+    paths: ['macos/**', 'lua-source.zip', 'mac-release.json', '.github/workflows/macos.yml', 'tools/package-macos.py']
   workflow_dispatch:
 permissions:
   contents: read
@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Extrair fontes nativos
-        run: unzip -q lua-source.zip 'macos/*' -d source
+        run: mkdir -p source && cp -R macos source/
       - name: Compilar e testar
         working-directory: source/macos
         run: |
