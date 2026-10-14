@@ -29,6 +29,7 @@ public enum SafeFiles {
   return p.hasPrefix(home+"/") && !p.hasPrefix(home+"/Library") && !p.hasPrefix(home+"/.Trash") && !p.hasPrefix(home+"/.ssh") && !p.hasPrefix(home+"/.codex") && root.pathExtension != "app"
  }
  public static func scan(_ root: URL, cancelled: ()->Bool = { false }) throws -> [ScanEntry] {
+  if cancelled(){throw CancellationError()}
   guard allowedRoot(root) else { throw LuaError.message("Escolha uma pasta pessoal, fora de Library e das pastas de sistema.") }
   let keys:Set<URLResourceKey>=[.isRegularFileKey,.isSymbolicLinkKey,.fileSizeKey,.contentModificationDateKey,.isPackageKey]
   guard let files=FileManager.default.enumerator(at:root,includingPropertiesForKeys:Array(keys),options:[.skipsHiddenFiles,.skipsPackageDescendants]) else { return [] }
@@ -58,7 +59,8 @@ public enum SafeFiles {
  }
  public static func validateForTrash(_ entry:ScanEntry,root:URL) throws {
   guard allowedRoot(root), contained(entry.url,in:root) else {throw LuaError.message("Arquivo fora da pasta revisada.")}
-  let now=try entry.url.resourceValues(forKeys:[.fileSizeKey,.isRegularFileKey,.isSymbolicLinkKey,.contentModificationDateKey])
+  var fresh=entry.url;fresh.removeAllCachedResourceValues()
+  let now=try fresh.resourceValues(forKeys:[.fileSizeKey,.isRegularFileKey,.isSymbolicLinkKey,.contentModificationDateKey])
   guard now.isRegularFile == true,now.isSymbolicLink != true,Int64(now.fileSize ?? -1)==entry.bytes,now.contentModificationDate==entry.modified else {throw LuaError.message("O arquivo mudou desde a análise. Analise novamente.")}
  }
  public static func validateDuplicateBatch(_ selected:[ScanEntry],all:[ScanEntry],root:URL)throws {

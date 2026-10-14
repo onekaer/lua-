@@ -43,6 +43,7 @@ import LUACore
   let result:URL=try await withCheckedThrowingContinuation{c in sink.finish{c.resume(with:$0)}}
   let clip=root.appendingPathComponent("clipe.mp4");try await CaptureEngine.join([ReplaySegment(url:result,start:0,end:3)],seconds:2,output:clip)
   let asset=AVURLAsset(url:clip);let duration=try await asset.load(.duration);let tracks=try await asset.loadTracks(withMediaType:.video);guard tracks.count==1,duration.seconds>1.8,duration.seconds<=2.1 else{throw LuaError.message("Clipe com duração inválida")}
+  try NativeUpdate.verifyFixture(root.appendingPathComponent("update-check"))
  }
 }
 let application=NSApplication.shared

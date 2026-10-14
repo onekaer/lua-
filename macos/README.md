@@ -23,8 +23,8 @@ Atalhos: Control + Espaço abre/fecha sobreposição; Command + Shift + P tira p
 - FPS: abre jogos compatíveis com MTL_HUD_ENABLED=1. O HUD da Apple mede FPS Metal no próprio jogo. Launchers podem não repassar a configuração. Não há medição universal no LUA, 1% low/mínimo/máximo ou detecção DLSS/MetalFX nesta beta.
 - Sensores: estado térmico do sistema; temperatura em °C, ventoinhas e uso da GPU não são fornecidos por uma API pública universal. Leituras indisponíveis são declaradas.
 - Sobreposição: painéis sem ativação, móveis e fixáveis; fixados permitem clique através fora da edição. Digitar autoriza foco explicitamente. Full screen/Spaces/jogos reais precisam de validação adicional.
-- Galeria: vídeos/clipes/prints locais, busca, miniaturas, player e Lixeira com confirmação. Corte de trechos e capas personalizadas de jogos ainda não foram portados.
-- Atualizações: canal Mac separado do Windows, HTTPS oficial, tamanho e SHA-256. Download automático opcional; substituição do .app é manual nesta beta.
+- Galeria: vídeos/clipes/prints locais, busca, miniaturas, player e Lixeira com confirmação. Player com recorte de trechos preservando o original; capas personalizadas no menu do jogo.
+- Atualizações: canal Mac separado do Windows, HTTPS oficial, tamanho e SHA-256. Instalação automática opcional quando LUA.app está em Aplicativos com permissão de escrita; extração e assinatura local conferidas, versão validada e backup preservado. Fora de Aplicativos, o pacote verificado fica em Downloads para instalação manual.
 
 ## Verificação
 

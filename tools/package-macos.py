@@ -33,7 +33,7 @@ CPU/RAM/rede/disco, estado térmico, capturas com ScreenCaptureKit, áudio/micro
 
 Testes automatizados executados em runners Mac Apple Silicon e Intel: compilação, regras de segurança, duplicados, atualização, vídeo sintético real H.264 e exportação de clipe. Prévias geradas pelo próprio app nativo, com dados demonstrativos.
 
-Limitações: sem temperatura em °C/uso percentual de GPU garantidos; FPS via HUD Metal da Apple, sem métricas universais/1% low/DLSS. Sem assinatura Developer ID/notarização. Permissões de captura/microfone, jogos reais, tela cheia e desempenho precisam de validação em Mac físico. Não prometemos paridade completa com Windows. Atualizações desta beta são baixadas/verificadas, com substituição manual do app.
+Limitações: sem temperatura em °C/uso percentual de GPU garantidos; FPS via HUD Metal da Apple, sem métricas universais/1% low/DLSS. Sem assinatura Developer ID/notarização. Permissões de captura/microfone, jogos reais, tela cheia e desempenho precisam de validação em Mac físico. Não prometemos paridade completa com Windows. Atualizações verificadas com instalação opcional em Aplicativos e backup; instalação fora dessa pasta pode exigir substituição manual.
 
 Extraia mac-package, mova LUA.app para Aplicativos. Leia README.md e VALIDACAO.md. Não desative as proteções do macOS.
 ''')
