@@ -35,9 +35,9 @@ for size in [16,32,128,256,512]:
 subprocess.run(['iconutil','-c','icns',str(iconset),'-o',str(contents/'Resources/LUA.icns')],check=True)
 plist['CFBundleIconFile']='LUA'
 (contents/'Info.plist').write_bytes(plistlib.dumps(plist))
-with zipfile.ZipFile(root/'lua-source.zip') as z:
+if True:
  for name in ['README.md','LICENSE.txt','VALIDACAO.md']:
-  (out/name).write_bytes(z.read('macos/'+name))
+  (out/name).write_bytes((root/'macos'/name).read_bytes())
 shutil.copytree(arm/'previews',out/'Prévias',dirs_exist_ok=True)
 for folder,architecture in [(arm,'Apple-Silicon'),(intel,'Intel')]:
  for f in ['tests.txt','media-check.txt','ui-check.txt']:
