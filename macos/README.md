@@ -1,4 +1,4 @@
-# LUA para macOS 0.1.1 Beta
+# LUA para macOS 0.1.2 Beta
 
 Aplicativo nativo SwiftUI/AppKit, para macOS 15 ou posterior. Binário universal Apple Silicon e Intel. Código próprio sob MIT, sem dependências binárias do Windows.
 

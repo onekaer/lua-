@@ -1,4 +1,4 @@
-# Validação — LUA macOS 0.1.1 Beta
+# Validação — LUA macOS 0.1.2 Beta
 
 O resultado definitivo dos testes é fornecido pelo GitHub Actions nos arquivos Apple-Silicon/Intel do pacote. Compilação e execução não podem ser realizadas diretamente no Windows usado para o desenvolvimento.
 

@@ -14,7 +14,7 @@ enum Page:String,CaseIterable,Identifiable,Hashable {
 struct Game:Identifiable,Codable {var id:String{url.path};let name:String;let url:URL;var cover:String?=nil}
 struct Media:Identifiable {var id:String{url.path};let url:URL;let date:Date;let bytes:Int64;var kind:String{url.pathExtension=="png" ? "Prints" : url.lastPathComponent.hasPrefix("Clipe") ? "Clipes":"Vídeos"}}
 @MainActor final class Model:ObservableObject {
- static let version="0.1.1"
+ static let version="0.1.2"
  @Published var page:Page = .home
  @Published var cpu=0.0
  @Published var ramUsed:Int64=0
@@ -91,7 +91,7 @@ struct Media:Identifiable {var id:String{url.path};let url:URL;let date:Date;let
  func changeCaptureOptions(){save();guard captureActive,!isRecording,!clipBusy else{return};Task{await engine.stop();captureActive=false;await activateCapture(request:false)}}
  func screenshot(){Task{await activateCapture();guard captureActive else{return};do{engine.screenshot(to:try output("Print","png"))}catch{notice=error.localizedDescription}}}
  func toggleRecording(){if isRecording{engine.stopRecording();return};Task{await activateCapture();guard captureActive else{return};do{let target=try output("Gravação","mov");engine.startRecording(to:target);isRecording=true;recordingHUD?(true)}catch{notice=error.localizedDescription}}}
- func clip(){guard !clipBusy else{return};guard captureActive else{notice="Ative o histórico antes do momento que deseja salvar.";return};do{let target=try output("Clipe","mp4");clipBusy=true;engine.clip(seconds:clipSeconds,to:target);Task{try? await Task.sleep(nanoseconds:60_000_000_000);if clipBusy{clipBusy=false}}}catch{notice=error.localizedDescription}}
+ func clip(){guard !clipBusy else{return};guard captureActive else{notice="Ative o histórico antes do momento que deseja salvar.";return};do{let target=try output("Clipe","mp4");clipBusy=true;engine.clip(seconds:clipSeconds,to:target)}catch{notice=error.localizedDescription}}
  func refreshGallery(){guard !preview else{return};let keys:Set<URLResourceKey>=[.fileSizeKey,.contentModificationDateKey];media=((try? FileManager.default.contentsOfDirectory(at:folder,includingPropertiesForKeys:Array(keys))) ?? []).filter{["mov","mp4","png"].contains($0.pathExtension.lowercased())}.compactMap{u in guard let v=try? u.resourceValues(forKeys:keys) else{return nil};return Media(url:u,date:v.contentModificationDate ?? .distantPast,bytes:Int64(v.fileSize ?? 0))}.sorted{$0.date>$1.date}}
  func trashMedia(_ item:Media){guard confirm("Excluir esta captura?",detail:"\(item.url.lastPathComponent) será enviado à Lixeira.") else{return};do{guard SafeFiles.contained(item.url,in:folder) else{throw LuaError.message("Captura fora da pasta configurada.")};try FileManager.default.trashItem(at:item.url,resultingItemURL:nil);refreshGallery()}catch{notice=error.localizedDescription}}
  func confirm(_ title:String,detail:String)->Bool {let a=NSAlert();a.messageText=title;a.informativeText=detail;a.alertStyle = .warning;a.addButton(withTitle:"Confirmar");a.addButton(withTitle:"Cancelar");return a.runModal() == .alertFirstButtonReturn}
