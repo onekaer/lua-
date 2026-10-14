@@ -107,7 +107,17 @@ jobs:
         run: |
           unzip -q lua-source.zip -d packaged
           VERSION=$(python3 -c 'import json; print(json.load(open("release.json"))["version"])')
-          gh release view "v$VERSION" --repo "$GITHUB_REPOSITORY" --json tagName,assets,publishedAt > published-release.json
+          # A Windows release may be built by the other workflow on the same push.
+          # Wait for its published package before resolving the page download.
+          READY=0
+          for ATTEMPT in $(seq 1 20); do
+            if gh release view "v$VERSION" --repo "$GITHUB_REPOSITORY" --json tagName,assets,publishedAt,isDraft > published-release.json && python3 -c 'import json,sys; r=json.load(open("published-release.json")); sys.exit(0 if not r["isDraft"] and any(a["name"].endswith("-Windows-x64.zip") for a in r["assets"]) else 1)'; then
+              READY=1
+              break
+            fi
+            sleep 10
+          done
+          test "$READY" = 1 || { echo 'Pacote Windows ainda indisponível para a página.'; exit 1; }
           python3 tools/prepare-site.py packaged/site published-release.json
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
@@ -115,3 +125,4 @@ jobs:
           path: packaged/site
       - id: deploy
         uses: actions/deploy-pages@v4
+
