@@ -14,19 +14,19 @@ O app está em desenvolvimento. Sensores, captura de FPS e sobreposições depen
 
 O LUA reúne CPU, GPU, RAM, temperaturas disponíveis, FPS, rede e armazenamento em um aplicativo nativo que abre compacto no canto e permanece na bandeja. Tem painel ampliado, abas personalizáveis e sobreposições com atalhos configuráveis.
 
-## LUA para Mac · 0.1.1 Beta
+## LUA para Mac · 0.1.2 Beta
 
-[**Baixar para macOS — Apple Silicon e Intel**](https://github.com/onekaer/lua-/releases/download/mac-v0.1.1/LUA-0.1.1-macOS-universal.zip) · [Guia Mac e limitações](macos/README.md) · [Todas as prévias nativas](https://github.com/onekaer/lua-/releases/download/mac-v0.1.1/LUA-macOS-previas.zip)
+[**Baixar para macOS — Apple Silicon e Intel**](https://github.com/onekaer/lua-/releases/download/mac-v0.1.2/LUA-0.1.2-macOS-universal.zip) · [Guia Mac e limitações](macos/README.md) · [Ver 15 telas no navegador](https://onekaer.github.io/lua-/mac.html) · [Todas as prévias nativas](https://github.com/onekaer/lua-/releases/download/mac-v0.1.2/LUA-macOS-previas.zip)
 
 Aplicativo nativo SwiftUI/AppKit para **macOS 15 ou posterior**. CPU/RAM, rede, espaço livre, análise e duplicados com revisão, biblioteca de jogos .app/Steam, galeria com player/recorte, capturas/áudio/microfone, buffer retroativo, janelas móveis/fixáveis e atualização opcional com backup.
 
 Compilação e testes executados em runners Mac Apple Silicon e Intel. Inclui regras de limpeza/atualização, vídeo sintético H.264, clipe exportado e renderização nativa. As imagens abaixo mostram o app real com números demonstrativos; não são benchmarks.
 
-<img src="https://onekaer.github.io/lua-/assets/mac/inicio.png?v=mac-0.1.1" alt="LUA nativo para Mac, com barra lateral e monitoramento — dados demonstrativos" width="840">
+<img src="https://onekaer.github.io/lua-/assets/mac/inicio.png?v=mac-0.1.2" alt="LUA nativo para Mac, com barra lateral e monitoramento — dados demonstrativos" width="840">
 
-![Barra nativa Mac de sobreposição](https://onekaer.github.io/lua-/assets/mac/barra.png?v=mac-0.1.1)
+![Barra nativa Mac de sobreposição](https://onekaer.github.io/lua-/assets/mac/barra.png?v=mac-0.1.2)
 
-<img src="https://onekaer.github.io/lua-/assets/mac/captura.png?v=mac-0.1.1" alt="Captura Mac com três ações alinhadas e Ver galeria" width="350">
+<img src="https://onekaer.github.io/lua-/assets/mac/captura.png?v=mac-0.1.2" alt="Captura Mac com três ações alinhadas e Ver galeria" width="350">
 
 **Diferenças importantes:** FPS via HUD Metal em jogos compatíveis; sem FPS universal/1% low/DLSS, temperatura em °C ou uso detalhado de GPU nesta beta. Captura real, permissões e desempenho em jogos físicos ainda precisam de validação. Sem assinatura Developer ID/notarização, o Gatekeeper pode bloquear a abertura. Leia o guia antes de instalar; não desative as proteções do macOS.
 
