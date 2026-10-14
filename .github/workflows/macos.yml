@@ -1,0 +1,65 @@
+name: Compilar e testar LUA para macOS
+on:
+  push:
+    branches: [main]
+    paths: ['lua-source.zip', 'mac-release.json', '.github/workflows/macos.yml', 'tools/package-macos.py']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: lua-macos
+  cancel-in-progress: false
+jobs:
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extrair fontes nativos
+        run: unzip -q lua-source.zip 'macos/*' -d source
+      - name: Compilar e testar
+        working-directory: source/macos
+        run: |
+          set -euo pipefail
+          swift --version
+          swift test 2>&1 | tee tests.txt
+          swift build -c release 2>&1 | tee build.txt
+          mkdir -p artifacts/previews
+          cp "$(swift build -c release --show-bin-path)/LUA" artifacts/LUA
+          ./artifacts/LUA --verify-media "$RUNNER_TEMP/lua-media-test" | tee artifacts/media-check.txt
+          ./artifacts/LUA --render artifacts/previews | tee artifacts/ui-check.txt
+          cp tests.txt build.txt artifacts/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lua-${{ matrix.runner }}
+          path: source/macos/artifacts
+  package:
+    needs: native
+    runs-on: macos-15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: compiled
+      - name: Montar e verificar aplicativo universal
+        run: python3 tools/package-macos.py
+      - name: Publicar beta para Mac
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          VERSION=$(python3 -c 'import json; print(json.load(open("mac-release.json"))["version"])')
+          TAG="mac-v$VERSION"
+          if gh release view "$TAG" --json isDraft | grep -q '"isDraft":false'; then
+            echo 'Versão já publicada; preservando pacote imutável.'
+            exit 0
+          fi
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --target "$GITHUB_SHA" --title "LUA $VERSION Beta para macOS" --notes-file mac-notes.md --draft --prerelease
+          gh release upload "$TAG" "LUA-$VERSION-macOS-universal.zip" LUA-macOS-atualizacoes.json LUA-macOS-previas.zip --clobber
+          gh release edit "$TAG" --draft=false --prerelease --latest=false --notes-file mac-notes.md
