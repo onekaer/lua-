@@ -1,10 +1,16 @@
-# LUA · Monitoramento, capturas e jogos para Windows
+# LUA Beta · Desempenhos, capturas e organização
 
 [**Conheça o LUA e baixe a versão atual →**](https://onekaer.github.io/lua-/)
 
 [Baixar pelo GitHub Releases](https://github.com/onekaer/lua-/releases/latest) · [Histórico de versões](https://github.com/onekaer/lua-/releases) · [Canal do atualizador](https://github.com/onekaer/lua-/releases/latest/download/LUA-atualizacoes.json)
 
-![Painel compacto do LUA](https://onekaer.github.io/lua-/assets/inicio.png)
+**Windows 10/11 x64 · Em beta · Versão atual: 1.9.0**
+
+O app está em desenvolvimento. Sensores, captura de FPS e sobreposições dependem do hardware, das permissões e do jogo. A versão atual ainda não possui assinatura digital de um editor reconhecido e pode receber um aviso do SmartScreen. Veja [distribuição e assinatura](DISTRIBUICAO.md).
+
+![Prévia ilustrativa do LUA durante um jogo, com FPS, CPU e GPU](https://onekaer.github.io/lua-/assets/sobreposicao-jogo.svg)
+
+*Cenário original e métricas demonstrativas; não é um benchmark nem uma captura real de jogo. As imagens das interfaces abaixo são do aplicativo.*
 
 O LUA reúne CPU, GPU, RAM, temperaturas disponíveis, FPS, rede e armazenamento em um aplicativo nativo que abre compacto no canto e permanece na bandeja. Tem painel ampliado, abas personalizáveis e sobreposições com atalhos configuráveis.
 
@@ -19,6 +25,64 @@ O LUA reúne CPU, GPU, RAM, temperaturas disponíveis, FPS, rede e armazenamento
 - Gravação de tela, áudio/microfone, prints e buffer de clipes anteriores ao clique.
 - Galeria por tipo/data, player e corte de trecho.
 - Atualizador com instalação manual ou automática opcional, integridade e backup.
+
+## Conheça cada área
+
+### Início e hardware
+
+Painel compacto com CPU, GPU, memória, temperaturas disponíveis, rede e espaço livre. Expanda quando quiser mais detalhes ou personalize a barra de abas nas Configurações. A leitura de CPU pode exigir o driver oficial PawnIO e permissão específica para o assistente de sensores.
+
+<img src="https://onekaer.github.io/lua-/assets/inicio.png" alt="Início compacto do LUA com temperaturas, hardware e espaço livre" width="340">
+
+### FPS e fluidez
+
+Selecione o processo do jogo para capturar FPS, tempo por quadro e 1% low com PresentMon. Não há injeção de código no jogo. Na imagem, nenhum processo está selecionado: valores ausentes aparecem como `—`. A presença de uma DLL não confirma DLSS ativo; a comparação com e sem DLSS é manual.
+
+![Página Jogos e FPS, com seleção de processo, FPS, tempo por frame e 1% low](https://onekaer.github.io/lua-/assets/fps.png)
+
+### Sobreposição durante o jogo
+
+Métricas no canto, barra centralizada e janelas flutuantes. Personalize atalhos, posições e métricas. Fora da edição, métricas e janelas fixadas permitem cliques através. Janela sem bordas costuma ser o modo mais compatível; tela cheia exclusiva pode impedir a exibição.
+
+![Barra real da sobreposição do LUA](https://onekaer.github.io/lua-/assets/barra.png)
+
+<img src="https://onekaer.github.io/lua-/assets/sobreposicao.png" alt="Sobreposição real de hardware; FPS sem captura ativa aparece como traço" width="300">
+
+### Capturas e clipes retroativos
+
+Print, gravação comum, áudio/microfone e salvamento do histórico anterior ao clique. Escolha atalhos, qualidade e duração. O buffer precisa estar ativo antes do acontecimento e usa recursos de captura. A gravação comum tem indicador e botão Parar; salvar um clipe usa o histórico existente.
+
+<img src="https://onekaer.github.io/lua-/assets/captura.png" alt="Janela compacta de captura com print, clipe, gravação, microfone e galeria" width="380">
+
+### Galeria
+
+Vídeos, clipes e prints em áreas separadas. Busque, ordene por data, abra a mídia no player, corte trechos, mostre na pasta ou exclua após revisão. As mídias de demonstração da imagem mostram somente a interface do LUA.
+
+![Galeria com filtros, miniaturas e ações Mostrar na pasta e Excluir](https://onekaer.github.io/lua-/assets/galeria.png)
+
+### Jogos instalados
+
+Grade como padrão, com alternativa em lista. Capas oficiais quando disponíveis, busca, filtros por plataforma e tamanho, Explorar e opções de capa no menu. A desinstalação pede confirmação e depende da plataforma; pastas portáteis podem ser adicionadas manualmente.
+
+![Biblioteca de jogos com capas reais, plataformas, tamanhos e pesquisa](https://onekaer.github.io/lua-/assets/jogos.png)
+
+### Rede e teste de internet
+
+Tráfego de recebimento e envio, interfaces disponíveis, detalhes da conexão e teste de download, upload e latência. O teste de velocidade utiliza dados de teste da Cloudflare.
+
+![Rede e teste de velocidade na interface do LUA](https://onekaer.github.io/lua-/assets/rede.png)
+
+### Armazenamento, limpeza e diagnóstico
+
+Veja o espaço livre e analise pastas, arquivos grandes, temporários antigos e duplicados por conteúdo. A limpeza permite selecionar os itens, marcar tudo e revisar antes de enviar à Lixeira. O diagnóstico reúne dados de memória, processador, rede e discos, com exportação de relatório. Uma leitura isolada não determina um defeito e a análise não substitui testes físicos do hardware.
+
+![Diagnóstico local do LUA com memória, CPU, espaço livre e conexão](https://onekaer.github.io/lua-/assets/analise.png)
+
+### Configurações e atualizações
+
+Seções retráteis para navegação, sobreposições, atalhos e atualizações. O app avisa quando uma nova versão está disponível no canal; instalar automaticamente é uma escolha do usuário.
+
+<img src="https://onekaer.github.io/lua-/assets/configuracoes.png" alt="Configurações com atualização automática opcional e seções retráteis" width="340">
 
 ## Instalar
 
