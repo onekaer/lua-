@@ -70,6 +70,13 @@ final class CaptureEngine:NSObject,SCStreamOutput,SCStreamDelegate {
    let now=CMSampleBufferGetPresentationTimeStamp(sample).seconds
    if buffer==nil {do{buffer=try newSink(cache.appendingPathComponent(UUID().uuidString+".mov"));segmentStart=now}catch{fail(error)}}
    if now-segmentStart>=3,let old=buffer {
+    let available=((try? FileManager.default.attributesOfFileSystem(forPath:cache.path))?[.systemFreeSize] as? NSNumber)?.int64Value ?? Int64.max
+    if available<500*1024*1024 {
+     buffer?.writer.cancelWriting();buffer=nil;running=false
+     if let active=recording{recording=nil;active.finish{result in if case .success(let url)=result{DispatchQueue.main.async{self.onSaved?(url)}}}}
+     Task{try? await self.stream?.stopCapture()}
+     fail(LuaError.message("Captura interrompida: menos de 500 MB livres. A gravação recebida foi finalizada."));return
+    }
     let begin=segmentStart;buffer=nil;segmentPending+=1
     old.finish{result in self.queue.async{self.segmentPending-=1;if case .success(let url)=result{self.segments.append(ReplaySegment(url:url,start:begin,end:now));self.prune(now:now)}else if case .failure(let error)=result{self.fail(error)}}}
     do{buffer=try newSink(cache.appendingPathComponent(UUID().uuidString+".mov"));segmentStart=now}catch{fail(error)}
