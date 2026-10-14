@@ -16,7 +16,7 @@ O LUA reúne CPU, GPU, RAM, temperaturas disponíveis, FPS, rede e armazenamento
 
 ## LUA para Mac · 0.1.4 Beta
 
-[**Baixar para macOS — Apple Silicon e Intel**](https://github.com/onekaer/lua-/releases/download/mac-v0.1.4/LUA-0.1.4-macOS-universal.zip) · [Guia Mac e limitações](macos/README.md) · [Ver 15 telas no navegador](https://onekaer.github.io/lua-/mac.html) · [Todas as prévias nativas](https://github.com/onekaer/lua-/releases/download/mac-v0.1.4/LUA-macOS-previas.zip)
+[**Baixar para macOS — Apple Silicon e Intel**](https://github.com/onekaer/lua-/releases/download/mac-v0.1.4/LUA-0.1.4-macOS-universal.zip) · [Guia Mac e limitações](macos/README.md) · [Ver 16 telas no navegador](https://onekaer.github.io/lua-/mac.html) · [Todas as prévias nativas](https://github.com/onekaer/lua-/releases/download/mac-v0.1.4/LUA-macOS-previas.zip)
 
 Aplicativo nativo SwiftUI/AppKit para **macOS 15 ou posterior**. O indicador REC/tempo/Parar segue o visual do Windows e é excluído do fluxo de captura do LUA; validação visual com captura real em Mac físico continua pendente. Gravações e clipes em MP4/H.264/AAC. A beta 0.1.4 limita filas/miniaturas, serializa reinícios e preserva o bloqueio durante a exportação de clipes. Sem o relatório técnico, a causa do encerramento relatado não pôde ser determinada. CPU/RAM, rede, espaço livre, análise e duplicados com revisão, biblioteca de jogos .app/Steam, galeria com player/recorte, capturas/áudio/microfone, buffer retroativo, janelas móveis/fixáveis e atualização opcional com backup.
 
@@ -27,6 +27,10 @@ Compilação e testes executados em runners Mac Apple Silicon e Intel. Inclui re
 ![Barra nativa Mac de sobreposição](https://onekaer.github.io/lua-/assets/mac/barra.png?v=mac-0.1.4)
 
 <img src="https://onekaer.github.io/lua-/assets/mac/captura.png?v=mac-0.1.4" alt="Captura Mac com três ações alinhadas e Ver galeria" width="350">
+
+<img src="https://onekaer.github.io/lua-/assets/mac/gravacao.png?v=mac-0.1.4" alt="Indicador nativo Mac com REC, tempo e Parar" width="350">
+
+Indicador visível no monitor e excluído do fluxo de captura do LUA. A prévia mostra a interface; a exclusão em um vídeo real ainda precisa de validação em Mac físico.
 
 **Diferenças importantes:** FPS via HUD Metal em jogos compatíveis; sem FPS universal/1% low/DLSS, temperatura em °C ou uso detalhado de GPU nesta beta. Captura real, permissões e desempenho em jogos físicos ainda precisam de validação. Sem assinatura Developer ID/notarização, o Gatekeeper pode bloquear a abertura. Leia o guia antes de instalar; não desative as proteções do macOS.
 
