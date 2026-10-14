@@ -41,8 +41,13 @@ final class CaptureEngine:NSObject,SCStreamOutput,SCStreamDelegate {
  let cache:URL
  var lastImage:CVPixelBuffer?
  var running=false
+ var activeDisplayID:CGDirectDisplayID?
+ var samplesPaused=false,resumeAfter:CMTime?
+ var excludedWindowIDs=Set<CGWindowID>()
+ var hudFilterReady=false
  var onStatus:((String)->Void)?,onSaved:((URL)->Void)?,onError:((Error)->Void)?
  var onClipFinished:((Result<URL,Error>)->Void)?
+ var onRecordingFinished:((Result<URL,Error>)->Void)?
  init(cache:URL){self.cache=cache;super.init()}
  func notify(_ text:String){DispatchQueue.main.async{self.onStatus?(text)}}
  func fail(_ error:Error){DispatchQueue.main.async{self.onError?(error)}}
@@ -51,11 +56,12 @@ final class CaptureEngine:NSObject,SCStreamOutput,SCStreamDelegate {
   // Permission is requested only after an explicit user action or a previously granted permission.
   let content=try await SCShareableContent.excludingDesktopWindows(false,onScreenWindowsOnly:true)
   guard let display=content.displays.first(where:{$0.displayID==displayID}) ?? content.displays.first else {throw LuaError.message("Nenhuma tela disponível.")}
+  activeDisplayID=display.displayID;hudFilterReady=false
   width=min(display.width,1920);height=Int(Double(display.height)*Double(width)/Double(display.width));height-=height%2;width-=width%2
   systemAudio=audio;microphone=mic
   let config=SCStreamConfiguration();config.width=width;config.height=height;config.minimumFrameInterval=CMTime(value:1,timescale:30);config.queueDepth=3;config.showsCursor=true;config.capturesAudio=audio;config.sampleRate=48000;config.channelCount=2;config.excludesCurrentProcessAudio=true;config.captureMicrophone=mic
-  // The app's overlay is intentionally included, matching the Windows edition.
-  let filter=SCContentFilter(display:display,excludingWindows:[])
+  // Keep the workspace in captures, excluding only the recording indicator.
+  let filter=SCContentFilter(display:display,excludingWindows:content.windows.filter{excludedWindowIDs.contains($0.windowID)})
   let s=SCStream(filter:filter,configuration:config,delegate:self)
   try s.addStreamOutput(self,type:.screen,sampleHandlerQueue:queue)
   if audio {try s.addStreamOutput(self,type:.audio,sampleHandlerQueue:queue)}
@@ -63,13 +69,14 @@ final class CaptureEngine:NSObject,SCStreamOutput,SCStreamDelegate {
   try FileManager.default.createDirectory(at:cache,withIntermediateDirectories:true)
   stream=s;try await s.startCapture();running=true;notify("Histórico ativo · aguarde os primeiros segundos")
  }
- func stream(_ stream:SCStream,didStopWithError error:Error) {guard stream === self.stream else{return};running=false;fail(error);queue.async{self.buffer?.writer.cancelWriting();self.buffer=nil;if let sink=self.recording{self.recording=nil;sink.finish{result in if case .success(let url)=result{DispatchQueue.main.async{self.onSaved?(url)}}}}};notify("Captura interrompida · reative o histórico")}
+ func stream(_ stream:SCStream,didStopWithError error:Error) {guard stream === self.stream else{return};running=false;fail(error);queue.async{self.buffer?.writer.cancelWriting();self.buffer=nil;if let sink=self.recording{self.recording=nil;sink.finish{result in DispatchQueue.main.async{self.onRecordingFinished?(result)}}}};notify("Captura interrompida · reative o histórico")}
  func stream(_ stream:SCStream,didOutputSampleBuffer sample:CMSampleBuffer,of type:SCStreamOutputType) {
   guard stream === self.stream else{return}
   autoreleasepool {process(sample,type:type)}
  }
  func process(_ sample:CMSampleBuffer,type:SCStreamOutputType) {
-  guard sample.isValid,CMSampleBufferGetPresentationTimeStamp(sample).isValid else{return}
+  let time=CMSampleBufferGetPresentationTimeStamp(sample)
+  guard sample.isValid,acceptsSample(at:time) else{return}
   if type == .screen {
    guard let attachments=CMSampleBufferGetSampleAttachmentsArray(sample,createIfNecessary:false) as? [[SCStreamFrameInfo:Any]],let value=attachments.first?[.status] as? Int,value==SCFrameStatus.complete.rawValue,let image=sample.imageBuffer else{return}
    lastImage=image
@@ -79,7 +86,7 @@ final class CaptureEngine:NSObject,SCStreamOutput,SCStreamDelegate {
     let available=((try? FileManager.default.attributesOfFileSystem(forPath:cache.path))?[.systemFreeSize] as? NSNumber)?.int64Value ?? Int64.max
     if available<500*1024*1024 {
      buffer?.writer.cancelWriting();buffer=nil;running=false
-     if let active=recording{recording=nil;active.finish{result in if case .success(let url)=result{DispatchQueue.main.async{self.onSaved?(url)}}}}
+     if let active=recording{recording=nil;active.finish{result in DispatchQueue.main.async{self.onRecordingFinished?(result)}}}
      Task{try? await self.stream?.stopCapture()}
      fail(LuaError.message("Captura interrompida: menos de 500 MB livres. A gravação recebida foi finalizada."));return
     }
@@ -92,8 +99,27 @@ final class CaptureEngine:NSObject,SCStreamOutput,SCStreamDelegate {
  }
  func newSink(_ url:URL)throws->MovieSink {try MovieSink(url:url,width:width,height:height,audio:systemAudio,mic:microphone)}
  func prune(now:Double) {guard !exporting else{return};let old=segments.filter{$0.end<now-130};segments.removeAll{$0.end<now-130};old.forEach{try? FileManager.default.removeItem(at:$0.url)};notify("Histórico pronto · até \(Int(segments.reduce(0){$0+$1.end-$1.start})) s disponíveis")}
- func startRecording(to url:URL) {queue.async{do{guard self.running,self.recording==nil else{throw LuaError.message("Ative a captura antes de gravar.")};self.recording=try self.newSink(url);self.notify("Gravação em andamento")}catch{self.fail(error)}}}
- func stopRecording(){queue.async{guard let sink=self.recording else{return};self.recording=nil;sink.finish{result in DispatchQueue.main.async{switch result{case .success(let url):self.onSaved?(url);case .failure(let error):self.onError?(error)}}}}}
+ func acceptsSample(at time:CMTime)->Bool{!samplesPaused && time.isValid && (resumeAfter==nil || time>=resumeAfter!)}
+ func pauseSamples() async {await withCheckedContinuation{(done:CheckedContinuation<Void,Never>) in queue.async{self.samplesPaused=true;done.resume()}}}
+ func resumeSamples() async {await withCheckedContinuation{(done:CheckedContinuation<Void,Never>) in queue.async{self.resumeAfter=CMClockGetTime(self.stream?.synchronizationClock ?? CMClockGetHostTimeClock());self.samplesPaused=false;done.resume()}}}
+ func excludeRecordingIndicator(_ id:CGWindowID) async throws {
+  guard let current=stream,let displayID=activeDisplayID,running,id>0 else{throw LuaError.message("A captura não está pronta para preparar o indicador.")}
+  // The new panel must be known to WindowServer before applying the filter.
+  // Samples remain paused until the filter is applied and the writer is ready.
+  for attempt in 0..<5 {
+   let content=try await SCShareableContent.excludingDesktopWindows(false,onScreenWindowsOnly:false)
+   guard let display=content.displays.first(where:{$0.displayID==displayID}) else{throw LuaError.message("O monitor da captura foi desconectado.")}
+   if let indicator=content.windows.first(where:{$0.windowID==id}){
+    try await current.updateContentFilter(SCContentFilter(display:display,excludingWindows:[indicator]))
+    guard stream === current,running else{throw LuaError.message("A captura foi interrompida durante a preparação.")}
+    excludedWindowIDs=[id];hudFilterReady=true;return
+   }
+   if attempt<4{try await Task.sleep(nanoseconds:50_000_000)}
+  }
+  throw LuaError.message("Não foi possível excluir o indicador do vídeo. Tente iniciar a gravação novamente.")
+ }
+ func startRecording(to url:URL) async throws {try await withCheckedThrowingContinuation{(done:CheckedContinuation<Void,Error>) in queue.async{do{guard self.running,self.recording==nil else{throw LuaError.message("Ative a captura antes de gravar.")};guard self.hudFilterReady else{throw LuaError.message("O indicador precisa estar excluído antes de gravar.")};self.recording=try self.newSink(url);self.notify("Gravação em andamento");done.resume()}catch{done.resume(throwing:error)}}}}
+ func stopRecording(){queue.async{guard let sink=self.recording else{return};self.recording=nil;sink.finish{result in DispatchQueue.main.async{self.onRecordingFinished?(result)}}}}
  func screenshot(to url:URL){queue.async{guard let image=self.lastImage else{self.fail(LuaError.message("Ative a captura e aguarde o primeiro quadro."));return};let ci=CIImage(cvPixelBuffer:image);let ctx=CIContext();guard let cg=ctx.createCGImage(ci,from:ci.extent) else{return};let rep=NSBitmapImageRep(cgImage:cg);do{guard let data=rep.representation(using:.png,properties:[:]) else{throw LuaError.message("PNG indisponível.")};try data.write(to:url,options:.atomic);DispatchQueue.main.async{self.onSaved?(url)}}catch{self.fail(error)}}}
  func clip(seconds:Int,to url:URL){queue.async{
   guard !self.exporting else{self.fail(LuaError.message("Aguarde o clipe atual terminar."));return}
@@ -121,5 +147,5 @@ final class CaptureEngine:NSObject,SCStreamOutput,SCStreamDelegate {
   let mix=AVMutableAudioMix();mix.inputParameters=audioTracks.values.map{let p=AVMutableAudioMixInputParameters(track:$0);p.setVolume(1,at:.zero);return p};export.audioMix=mix
   try await export.export(to:output,as:.mp4)
  }
- func stop() async {let old=stream;stream=nil;try? await old?.stopCapture();running=false;await withCheckedContinuation{(done:CheckedContinuation<Void,Never>) in queue.async{self.generation+=1;self.segmentPending=0;self.buffer?.writer.cancelWriting();self.buffer=nil;self.lastImage=nil;self.segments.forEach{try? FileManager.default.removeItem(at:$0.url)};self.segments=[];done.resume()}}}
+ func stop() async {let old=stream;stream=nil;try? await old?.stopCapture();running=false;await withCheckedContinuation{(done:CheckedContinuation<Void,Never>) in queue.async{self.generation+=1;self.segmentPending=0;self.samplesPaused=false;self.resumeAfter=nil;self.hudFilterReady=false;self.buffer?.writer.cancelWriting();self.buffer=nil;self.lastImage=nil;self.segments.forEach{try? FileManager.default.removeItem(at:$0.url)};self.segments=[];done.resume()}}}
 }

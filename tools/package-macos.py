@@ -56,7 +56,7 @@ feed={'version':version,'url':f'https://github.com/onekaer/lua-/releases/downloa
 
 CPU/RAM/rede/disco, estado térmico, capturas MP4 com ScreenCaptureKit, áudio/microfone, buffer de clipes, galeria, jogos .app/Steam, limpeza de duplicados com revisão, relatório e sobreposição móvel.
 
-Nesta versão: gravação comum em MP4/H.264/AAC, miniaturas de prints reduzidas antes de decodificar, fila de captura menor, finalizações do histórico limitadas e reinício serializado ao mudar opções. Salvar print ou falhar outra ação não libera o bloqueio de uma exportação de clipe. Estes ajustes tratam riscos encontrados na revisão; sem o relatório de falha não foi possível atribuir a causa do encerramento informado.
+Nesta versão: indicador com ponto vermelho, REC, tempo decorrido e Parar, no visual do Windows. O filtro do ScreenCaptureKit exclui somente essa janela do vídeo e do histórico; os demais painéis permanecem capturáveis. O início pausa a entrega de amostras até confirmar o filtro e preparar o MP4, descartando quadros antigos. Se não for possível excluir o indicador, a gravação não inicia. O indicador acompanha a finalização do arquivo. Gravações e clipes permanecem MP4/H.264/AAC.
 
 Testes automatizados executados em runners Mac Apple Silicon e Intel: compilação, regras de segurança, duplicados, atualização, MP4 sintético H.264/AAC, duas trilhas de áudio, clipe mixado e histórico MOV exportado em MP4. Abertura normal, navegação, sobreposição e fechar/reabrir também verificados. Prévias geradas pelo próprio app nativo, com dados demonstrativos.
 

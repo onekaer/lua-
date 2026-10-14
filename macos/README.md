@@ -1,4 +1,4 @@
-# LUA para macOS 0.1.3 Beta
+# LUA para macOS 0.1.4 Beta
 
 Aplicativo nativo SwiftUI/AppKit, para macOS 15 ou posterior. Binário universal Apple Silicon e Intel. Código próprio sob MIT, sem dependências binárias do Windows.
 
@@ -34,8 +34,16 @@ Compilar em um Mac com Xcode Command Line Tools: `swift test` e `swift build -c 
 
 Fontes Apple: [ScreenCaptureKit](https://developer.apple.com/documentation/screencapturekit/capturing-screen-content-in-macos) e [Metal Performance HUD](https://developer.apple.com/videos/play/tech-talks/110339/).
 
-## Estabilidade e consumo na beta 0.1.3
+## Estabilidade e consumo na beta 0.1.4
 
 Miniaturas de prints são reduzidas para até 440 px antes da decodificação, em trabalho separado da interface. Captura mantém três buffers de tela e limita segmentos simultâneos em finalização a dois, com descarte de objetos temporários a cada callback. Em disco lento o histórico pode ter intervalos; a gravação comum continua independente. Alterações de áudio aguardam a parada da sessão anterior; callbacks antigos são descartados. A lista de aplicativos é renovada a cada 10 s. Salvar um print ou falhar outra ação não libera uma exportação de clipe ainda ativa.
 
 A causa do encerramento informado não foi determinada sem o relatório de falha. Esses ajustes corrigem riscos encontrados no código; não provam que todo encerramento foi resolvido. Os testes do pacote verificam abertura normal, navegação, ciclos da sobreposição, fechar/reabrir, miniatura e bloqueio de exportação, além do MP4 sintético com duas trilhas AAC e clipe mixado. Captura/TCC/jogos em Mac físico continuam pendentes.
+
+## Indicador de gravação
+
+O indicador usa o visual do Windows: ponto vermelho, REC, tempo decorrido, estado do histórico e botão Parar. A janela não ativa o teclado do jogo. Ao finalizar, mostra Salvando e aguarda o MP4.
+
+O ScreenCaptureKit exclui somente a janela desse indicador do fluxo que alimenta o vídeo, o histórico e os prints do LUA. Antes de exibir o indicador, a entrega de amostras é pausada; o filtro é atualizado pelo ID da janela e o gravador só inicia após a confirmação. Quadros anteriores à retomada são descartados. Se o filtro não puder ser preparado, a gravação não começa e o indicador é recolhido. Os demais painéis da sobreposição continuam capturáveis. Isso se aplica às capturas feitas pelo LUA; não controla gravadores externos.
+
+Base: [filtro de janelas da Apple](https://developer.apple.com/documentation/screencapturekit/sccontentfilter/init(display:excludingwindows:)). Compilação, estado de interface e bloqueios são verificáveis em CI. A exclusão visual no vídeo real e o comportamento em jogos ainda exigem validação com permissão de captura em Mac físico.

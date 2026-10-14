@@ -14,7 +14,7 @@ enum Page:String,CaseIterable,Identifiable,Hashable {
 struct Game:Identifiable,Codable {var id:String{url.path};let name:String;let url:URL;var cover:String?=nil}
 struct Media:Identifiable {var id:String{url.path};let url:URL;let date:Date;let bytes:Int64;var kind:String{url.pathExtension=="png" ? "Prints" : url.lastPathComponent.hasPrefix("Clipe") ? "Clipes":"Vídeos"}}
 @MainActor final class Model:ObservableObject {
- static let version="0.1.3"
+ static let version="0.1.4"
  @Published var page:Page = .home
  @Published var cpu=0.0
  @Published var ramUsed:Int64=0
@@ -30,6 +30,9 @@ struct Media:Identifiable {var id:String{url.path};let url:URL;let date:Date;let
  @Published var captureReconfiguring=false
  @Published var captureActive=false
  @Published var isRecording=false
+ @Published var recordStarting=false
+ @Published var recordStopping=false
+ @Published var recordStartedAt:Date?
  @Published var clipBusy=false
  @Published var scanBusy=false
  @Published var speedBusy=false
@@ -59,7 +62,7 @@ struct Media:Identifiable {var id:String{url.path};let url:URL;let date:Date;let
  let data:URL,engine:CaptureEngine
  let preview:Bool
  var resize:((Bool)->Void)?
- var openOverlay:(()->Void)?,updateShortcuts:(()->Void)?,recordingHUD:((Bool)->Void)?
+ var openOverlay:(()->Void)?,updateShortcuts:(()->Void)?,recordingHUD:((Bool)->CGWindowID?)?
  init(preview:Bool=false,dataOverride:URL?=nil){
   self.preview=preview
   data=dataOverride ?? FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0].appendingPathComponent("LUA")
@@ -75,13 +78,14 @@ struct Media:Identifiable {var id:String{url.path};let url:URL;let date:Date;let
    let replay=data.appendingPathComponent("Replay");if let list=try? FileManager.default.contentsOfDirectory(at:replay,includingPropertiesForKeys:[.contentModificationDateKey]){for f in list where SafeFiles.contained(f,in:replay){let date=(try? f.resourceValues(forKeys:[.contentModificationDateKey]))?.contentModificationDate ?? Date();if Date().timeIntervalSince(date)>86400{try? FileManager.default.removeItem(at:f)}}}
   }
   engine.onStatus={[weak self] text in self?.captureStatus=text}
-  engine.onError={[weak self] error in self?.notice=error.localizedDescription;if self?.engine.running == false{self?.captureActive=false};if self?.engine.recording == nil{self?.isRecording=false;self?.recordingHUD?(false)}}
-  engine.onSaved={[weak self] url in guard let self else{return};if url.lastPathComponent.hasPrefix("Gravação"){self.isRecording=false;self.recordingHUD?(false)};self.notice="\(url.lastPathComponent) salvo";self.refreshGallery()}
+  engine.onError={[weak self] error in self?.notice=error.localizedDescription;if self?.engine.running == false{self?.captureActive=false}}
+  engine.onSaved={[weak self] url in guard let self else{return};self.notice="\(url.lastPathComponent) salvo";self.refreshGallery()}
+  engine.onRecordingFinished={[weak self] result in guard let self else{return};self.isRecording=false;self.recordStopping=false;self.recordStartedAt=nil;_ = self.recordingHUD?(false);switch result{case .success(let url):self.notice="\(url.lastPathComponent) salvo";self.refreshGallery();case .failure(let error):self.notice=error.localizedDescription}}
   engine.onClipFinished={[weak self] result in guard let self else{return};self.clipBusy=false;switch result{case .success(let url):self.notice="\(url.lastPathComponent) salvo";self.refreshGallery();case .failure(let error):self.notice=error.localizedDescription}}
   if preview{cpu=34;ramUsed=12_400_000_000;ramTotal=32_000_000_000;free=186_000_000_000;total=500_000_000_000;down=5_750_000;up=125_000;cpuHistory=(0..<40).map{30+12*sin(Double($0)/3)};captureStatus="Histórico pronto · 60 s disponíveis";captureActive=true;games=[Game(name:"Jogo Metal · demonstração",url:URL(fileURLWithPath:"/Applications/Exemplo.app"))]}
  }
  func start(){guard !preview else{return};sample();refreshGallery();timer=Timer.scheduledTimer(withTimeInterval:1.5,repeats:true){[weak self] _ in Task{@MainActor in self?.sample()}};Task{await checkUpdates();if !CommandLine.arguments.contains("--verify-startup"),CGPreflightScreenCaptureAccess(){await activateCapture(request:false)}}}
- func sample(){if Date()>=nextUpdate{nextUpdate=Date().addingTimeInterval(21600);Task{await checkUpdates()}};if autoUpdates,update != nil,!isRecording,!clipBusy,!updateBusy,Date()>=retryUpdate{retryUpdate=Date().addingTimeInterval(3600);Task{await downloadUpdate()}};let m=lua_metrics();cpu=m.cpu;ramUsed=Int64(m.memoryUsed);ramTotal=Int64(m.memoryTotal);cpuHistory.append(cpu);cpuHistory=Array(cpuHistory.suffix(40));let now=Date();if let old=oldNet,now>old.2{down=m.received>=old.0 ? Double(m.received-old.0)/now.timeIntervalSince(old.2):0;up=m.sent>=old.1 ? Double(m.sent-old.1)/now.timeIntervalSince(old.2):0};oldNet=(m.received,m.sent,now);if let attrs=try? FileManager.default.attributesOfFileSystem(forPath:FileManager.default.homeDirectoryForCurrentUser.path){free=(attrs[.systemFreeSize] as? NSNumber)?.int64Value ?? 0;total=(attrs[.systemSize] as? NSNumber)?.int64Value ?? 0};if now.timeIntervalSince(lastAppsRefresh)>=10{lastAppsRefresh=now;apps=NSWorkspace.shared.runningApplications.filter{$0.activationPolicy == .regular && !$0.isTerminated}.sorted{($0.localizedName ?? "")<($1.localizedName ?? "")}}}
+ func sample(){if Date()>=nextUpdate{nextUpdate=Date().addingTimeInterval(21600);Task{await checkUpdates()}};if autoUpdates,update != nil,!isRecording,!recordStarting,!recordStopping,!clipBusy,!updateBusy,Date()>=retryUpdate{retryUpdate=Date().addingTimeInterval(3600);Task{await downloadUpdate()}};let m=lua_metrics();cpu=m.cpu;ramUsed=Int64(m.memoryUsed);ramTotal=Int64(m.memoryTotal);cpuHistory.append(cpu);cpuHistory=Array(cpuHistory.suffix(40));let now=Date();if let old=oldNet,now>old.2{down=m.received>=old.0 ? Double(m.received-old.0)/now.timeIntervalSince(old.2):0;up=m.sent>=old.1 ? Double(m.sent-old.1)/now.timeIntervalSince(old.2):0};oldNet=(m.received,m.sent,now);if let attrs=try? FileManager.default.attributesOfFileSystem(forPath:FileManager.default.homeDirectoryForCurrentUser.path){free=(attrs[.systemFreeSize] as? NSNumber)?.int64Value ?? 0;total=(attrs[.systemSize] as? NSNumber)?.int64Value ?? 0};if now.timeIntervalSince(lastAppsRefresh)>=10{lastAppsRefresh=now;apps=NSWorkspace.shared.runningApplications.filter{$0.activationPolicy == .regular && !$0.isTerminated}.sorted{($0.localizedName ?? "")<($1.localizedName ?? "")}}}
  func save(){guard !preview else{return};UserDefaults.standard.set(folder.path,forKey:"lua.captureFolder");UserDefaults.standard.set(audio,forKey:"lua.audio");UserDefaults.standard.set(microphone,forKey:"lua.microphone");UserDefaults.standard.set(autoUpdates,forKey:"lua.autoUpdates");UserDefaults.standard.set(shortcut,forKey:"lua.shortcut");UserDefaults.standard.set(try? JSONEncoder().encode(games),forKey:"lua.games")}
  func chooseFolder(scan:Bool=false){let p=NSOpenPanel();p.canChooseDirectories=true;p.canChooseFiles=false;p.canCreateDirectories=true;p.message=scan ? "Escolha uma pasta pessoal para analisar":"Escolha onde salvar capturas";guard p.runModal() == .OK,let url=p.url else{return};if scan{scanRoot=url;entries=[];duplicates=[];selected=[]}else{folder=url;save();refreshGallery()}}
  func output(_ prefix:String,_ ext:String)throws->URL{try FileManager.default.createDirectory(at:folder,withIntermediateDirectories:true);let df=DateFormatter();df.dateFormat="yyyy-MM-dd HH.mm.ss";return folder.appendingPathComponent("\(prefix) \(df.string(from:Date())) \(UUID().uuidString.prefix(4)).\(ext)")}
@@ -91,9 +95,26 @@ struct Media:Identifiable {var id:String{url.path};let url:URL;let date:Date;let
   if microphone {let allowed=await AVCaptureDevice.requestAccess(for:.audio);guard allowed else{notice="Microfone não autorizado. Desative-o ou permita em Privacidade e Segurança.";return}}
   do{try await engine.start(audio:audio,mic:microphone);captureActive=true}catch{notice=error.localizedDescription}
  }
- func changeCaptureOptions(){save();guard captureActive,!isRecording,!clipBusy,!captureStarting,!captureReconfiguring else{return};captureReconfiguring=true;Task{defer{captureReconfiguring=false};await engine.stop();captureActive=false;await activateCapture(request:false)}}
+ func changeCaptureOptions(){save();guard captureActive,!isRecording,!recordStarting,!recordStopping,!clipBusy,!captureStarting,!captureReconfiguring else{return};captureReconfiguring=true;Task{defer{captureReconfiguring=false};await engine.stop();captureActive=false;await activateCapture(request:false)}}
  func screenshot(){Task{await activateCapture();guard captureActive else{return};do{engine.screenshot(to:try output("Print","png"))}catch{notice=error.localizedDescription}}}
- func toggleRecording(){if isRecording{engine.stopRecording();return};Task{await activateCapture();guard captureActive else{return};do{let target=try output("Gravação","mp4");engine.startRecording(to:target);isRecording=true;recordingHUD?(true)}catch{notice=error.localizedDescription}}}
+ func toggleRecording(){
+  guard !recordStarting,!recordStopping,!captureReconfiguring else{return}
+  if isRecording{recordStopping=true;engine.stopRecording();return}
+  recordStarting=true
+  Task{
+   defer{recordStarting=false}
+   await activateCapture();guard captureActive else{return}
+   await engine.pauseSamples()
+   do{
+    guard let id=recordingHUD?(true) else{throw LuaError.message("Não foi possível preparar o indicador de gravação.")}
+    try await engine.excludeRecordingIndicator(id)
+    let target=try output("Gravação","mp4")
+    try await engine.startRecording(to:target)
+    recordStartedAt=Date();isRecording=true
+   }catch{_ = recordingHUD?(false);recordStartedAt=nil;notice=error.localizedDescription}
+   await engine.resumeSamples()
+  }
+ }
  func clip(){guard !clipBusy else{return};guard captureActive else{notice="Ative o histórico antes do momento que deseja salvar.";return};do{let target=try output("Clipe","mp4");clipBusy=true;engine.clip(seconds:clipSeconds,to:target)}catch{notice=error.localizedDescription}}
  func refreshGallery(){guard !preview else{return};let keys:Set<URLResourceKey>=[.fileSizeKey,.contentModificationDateKey];media=((try? FileManager.default.contentsOfDirectory(at:folder,includingPropertiesForKeys:Array(keys))) ?? []).filter{["mov","mp4","png"].contains($0.pathExtension.lowercased())}.compactMap{u in guard let v=try? u.resourceValues(forKeys:keys) else{return nil};return Media(url:u,date:v.contentModificationDate ?? .distantPast,bytes:Int64(v.fileSize ?? 0))}.sorted{$0.date>$1.date}}
  func trashMedia(_ item:Media){guard confirm("Excluir esta captura?",detail:"\(item.url.lastPathComponent) será enviado à Lixeira.") else{return};do{guard SafeFiles.contained(item.url,in:folder) else{throw LuaError.message("Captura fora da pasta configurada.")};try FileManager.default.trashItem(at:item.url,resultingItemURL:nil);refreshGallery()}catch{notice=error.localizedDescription}}
@@ -111,5 +132,5 @@ struct Media:Identifiable {var id:String{url.path};let url:URL;let date:Date;let
  func exportReport(){let p=NSSavePanel();p.nameFieldStringValue="Diagnóstico LUA.txt";guard p.runModal() == .OK,let u=p.url else{return};do{try report().write(to:u,atomically:true,encoding:.utf8);notice="Relatório salvo"}catch{notice=error.localizedDescription}}
  func speed(){guard !speedBusy else{return};speedBusy=true;speedResult="Medindo…";Task{do{let session=URLSession(configuration:.ephemeral);let start=Date();let(_,r)=try await session.data(from:URL(string:"https://speed.cloudflare.com/__down?bytes=1000")!);guard (r as? HTTPURLResponse)?.statusCode==200 else{throw LuaError.message("Teste indisponível.")};let latency=Date().timeIntervalSince(start)*1000;let t=Date();let(data,response)=try await session.data(from:URL(string:"https://speed.cloudflare.com/__down?bytes=10000000")!);guard data.count==10_000_000,(response as? HTTPURLResponse)?.statusCode==200 else{throw LuaError.message("Download incompleto.")};let download=Double(data.count)/Date().timeIntervalSince(t);var request=URLRequest(url:URL(string:"https://speed.cloudflare.com/__up")!);request.httpMethod="POST";request.timeoutInterval=30;let payload=Data(count:2_000_000);let begin=Date();let(_,res)=try await session.upload(for:request,from:payload);guard (200..<300).contains((res as? HTTPURLResponse)?.statusCode ?? 0) else{throw LuaError.message("Upload indisponível.")};speedResult="↓ \(LuaFormat.rate(download))  ↑ \(LuaFormat.rate(Double(payload.count)/Date().timeIntervalSince(begin)))  · \(Int(latency)) ms (HTTPS)"}catch{speedResult=error.localizedDescription};speedBusy=false}}
  func checkUpdates() async {guard !preview else{return};do{let(data,response)=try await URLSession.shared.data(from:URL(string:"https://onekaer.github.io/lua-/mac-update.json")!);guard (response as? HTTPURLResponse)?.statusCode==200 else{return};let feed=try JSONDecoder().decode(UpdateFeed.self,from:data);try feed.validate();if feed.isNewer(than:Self.version){update=feed;notice="LUA \(feed.version) disponível para Mac";if autoUpdates{await downloadUpdate()}}}catch{notice="Não foi possível conferir atualizações: \(error.localizedDescription)"}}
- func downloadUpdate() async {guard !updateBusy,!isRecording,!clipBusy,let feed=update else{return};updateBusy=true;retryUpdate=Date().addingTimeInterval(3600);defer{updateBusy=false};do{try feed.validate();let(temp,response)=try await URLSession.shared.download(from:feed.url);guard (response as? HTTPURLResponse)?.statusCode==200 else{throw LuaError.message("Download indisponível.")};let size=(try temp.resourceValues(forKeys:[.fileSizeKey])).fileSize ?? 0;guard Int64(size)==feed.bytes,try SafeFiles.hash(temp)==feed.sha256 else{throw LuaError.message("A atualização falhou na verificação de integridade.")};guard !isRecording,!clipBusy else{retryUpdate=Date().addingTimeInterval(10);notice="Atualização aguardando a captura terminar.";return};let target=FileManager.default.urls(for:.downloadsDirectory,in:.userDomainMask)[0].appendingPathComponent(feed.url.lastPathComponent);if FileManager.default.fileExists(atPath:target.path){guard try SafeFiles.hash(target)==feed.sha256 else{throw LuaError.message("Há outro arquivo com esse nome em Downloads. Revise-o antes de atualizar.")}}else{try FileManager.default.moveItem(at:temp,to:target)};let prepared=try NativeUpdate.prepare(zip:target,version:feed.version,data:data,current:Bundle.main.bundleURL);try NativeUpdate.install(prepared,data:data);NSApp.terminate(nil)}catch{notice=error.localizedDescription}}
+ func downloadUpdate() async {guard !updateBusy,!isRecording,!recordStarting,!recordStopping,!clipBusy,let feed=update else{return};updateBusy=true;retryUpdate=Date().addingTimeInterval(3600);defer{updateBusy=false};do{try feed.validate();let(temp,response)=try await URLSession.shared.download(from:feed.url);guard (response as? HTTPURLResponse)?.statusCode==200 else{throw LuaError.message("Download indisponível.")};let size=(try temp.resourceValues(forKeys:[.fileSizeKey])).fileSize ?? 0;guard Int64(size)==feed.bytes,try SafeFiles.hash(temp)==feed.sha256 else{throw LuaError.message("A atualização falhou na verificação de integridade.")};guard !isRecording,!recordStarting,!recordStopping,!clipBusy else{retryUpdate=Date().addingTimeInterval(10);notice="Atualização aguardando a captura terminar.";return};let target=FileManager.default.urls(for:.downloadsDirectory,in:.userDomainMask)[0].appendingPathComponent(feed.url.lastPathComponent);if FileManager.default.fileExists(atPath:target.path){guard try SafeFiles.hash(target)==feed.sha256 else{throw LuaError.message("Há outro arquivo com esse nome em Downloads. Revise-o antes de atualizar.")}}else{try FileManager.default.moveItem(at:temp,to:target)};let prepared=try NativeUpdate.prepare(zip:target,version:feed.version,data:data,current:Bundle.main.bundleURL);try NativeUpdate.install(prepared,data:data);NSApp.terminate(nil)}catch{notice=error.localizedDescription}}
 }

@@ -23,7 +23,7 @@ import LUACore
  @objc func overlay(){workspace.toggle()}
  @objc func record(){model.toggleRecording()}
  func windowShouldClose(_ sender:NSWindow)->Bool{sender.orderOut(nil);return false}
- func applicationShouldTerminate(_ sender:NSApplication)->NSApplication.TerminateReply {guard let model else{return .terminateNow};if model.isRecording || model.clipBusy {model.notice="Pare a gravação e aguarde o clipe antes de sair.";show();return .terminateCancel};return .terminateNow}
+ func applicationShouldTerminate(_ sender:NSApplication)->NSApplication.TerminateReply {guard let model else{return .terminateNow};if model.isRecording || model.recordStarting || model.recordStopping || model.clipBusy {model.notice="Pare a gravação e aguarde o clipe antes de sair.";show();return .terminateCancel};return .terminateNow}
  func render(to root:URL)throws{
   try FileManager.default.createDirectory(at:root,withIntermediateDirectories:true)
   let fixture=Model(preview:true);let work=Workspace(fixture)
@@ -32,6 +32,9 @@ import LUACore
   try image(WorkspaceBar(workspace:work).preferredColorScheme(.dark),NSSize(width:650,height:60),"barra")
   try image(WidgetView(workspace:work,model:fixture,page:.capture).preferredColorScheme(.dark),NSSize(width:350,height:205),"captura")
   try image(WidgetView(workspace:work,model:fixture,page:.home).preferredColorScheme(.dark),NSSize(width:390,height:660),"widget-inicio")
+  fixture.isRecording=true;fixture.recordStartedAt=Date().addingTimeInterval(-7)
+  try image(RecordingHUDView(model:fixture).preferredColorScheme(.dark),NSSize(width:350,height:74),"gravacao")
+  fixture.isRecording=false;fixture.recordStartedAt=nil
   try "Imagens do app nativo macOS. Métricas demonstrativas; não é benchmark.\n".write(to:root.appendingPathComponent("LEIA-ME.txt"),atomically:true,encoding:.utf8)
  }
  func verifyMedia(_ root:URL) async throws{

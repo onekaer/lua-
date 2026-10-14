@@ -1,4 +1,4 @@
-# Validação — LUA macOS 0.1.3 Beta
+# Validação — LUA macOS 0.1.4 Beta
 
 O resultado definitivo dos testes é fornecido pelo GitHub Actions nos arquivos Apple-Silicon/Intel do pacote. Compilação e execução não podem ser realizadas diretamente no Windows usado para o desenvolvimento.
 
@@ -8,4 +8,6 @@ Sem Mac físico nesta tarefa: não foram testados consentimento TCC, captura rea
 
 Recursos sem equivalência nesta beta são indicados no app e README: temperaturas/GPU detalhadas, FPS universal/1% low/DLSS. Não é correto chamar esta beta de 100% validada ou de paridade completa com Windows.
 
-Rodada 0.1.3: adiciona MP4 real sintético com duas trilhas AAC, clipe mixado e histórico MOV exportado em MP4; abertura normal, 12 páginas, ciclos da sobreposição, fechar/reabrir, amostragem e miniatura limitada. Logs do resultado ficam no pacote. O relatório técnico do encerramento original não foi fornecido; não há causa confirmada ou garantia de correção desse incidente.
+Rodada 0.1.4: adiciona MP4 real sintético com duas trilhas AAC, clipe mixado e histórico MOV exportado em MP4; abertura normal, 12 páginas, ciclos da sobreposição, fechar/reabrir, amostragem e miniatura limitada. Logs do resultado ficam no pacote. O relatório técnico do encerramento original não foi fornecido; não há causa confirmada ou garantia de correção desse incidente.
+
+Rodada 0.1.4: indicador REC/tempo/Parar renderizado nativamente; identidade estável da janela não ativante; parada permanece bloqueada até a conclusão correta; prints e erros de outras ações não recolhem o indicador; amostras pausadas/anteriores à retomada são rejeitadas e o gravador recusa iniciar sem filtro preparado. Exclusão real de pixels via ScreenCaptureKit permanece pendente em Mac físico, sem declarar que runner a comprova.

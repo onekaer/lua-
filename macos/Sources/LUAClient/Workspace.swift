@@ -23,7 +23,16 @@ final class FloatingPanel:NSPanel {
  func close(_ page:Page){panels[page]?.orderOut(nil);panels.removeValue(forKey:page);pinned.remove(page)}
  func pin(_ page:Page){if pinned.contains(page){pinned.remove(page)}else{pinned.insert(page)}}
  func toggleTyping(){typing.toggle();for p in panels.values{p.typing=typing;if typing{p.styleMask.remove(.nonactivatingPanel)}else{p.styleMask.insert(.nonactivatingPanel);p.resignKey()}};if !typing{priorApp?.activate(options:[])}}
- func recording(_ active:Bool){if active{if hud==nil{let p=panel(size:NSSize(width:260,height:60));p.contentView=NSHostingView(rootView:HStack{Circle().fill(.pink).frame(width:8,height:8);Text("Gravando").font(.callout);Button("Parar"){self.model.toggleRecording()}}.padding(12).background(.ultraThinMaterial,in:RoundedRectangle(cornerRadius:14)).preferredColorScheme(.dark));hud=p};if let s=NSScreen.main{hud?.setFrameOrigin(NSPoint(x:s.visibleFrame.maxX-280,y:s.visibleFrame.maxY-90))};hud?.orderFrontRegardless()}else{hud?.orderOut(nil)}}
+ func recording(_ active:Bool)->CGWindowID? {
+  guard active else{hud?.orderOut(nil);return nil}
+  if hud==nil{let p=panel(size:NSSize(width:350,height:74));p.title="LUA • Indicador de gravação";p.contentView=NSHostingView(rootView:RecordingHUDView(model:model).preferredColorScheme(.dark));hud=p}
+  let screen=NSScreen.screens.first{($0.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.uint32Value==model.engine.activeDisplayID} ?? NSScreen.main
+  if let screen{hud?.setFrameOrigin(NSPoint(x:screen.visibleFrame.maxX-370,y:screen.visibleFrame.maxY-94))}
+  hud?.orderFrontRegardless();hud?.displayIfNeeded()
+  guard let number=hud?.windowNumber,number>0 else{return nil}
+  return CGWindowID(number)
+ }
+
  func registerKeys(){for key in keys{UnregisterEventHotKey(key)};keys=[]
   if eventHandler==nil{var type=EventTypeSpec(eventClass:OSType(kEventClassKeyboard),eventKind:UInt32(kEventHotKeyPressed));let context=Unmanaged.passUnretained(self).toOpaque();InstallEventHandler(GetApplicationEventTarget(),{_,event,context in guard let event,let context else{return OSStatus(eventNotHandledErr)};var id=EventHotKeyID();GetEventParameter(event,EventParamName(kEventParamDirectObject),EventParamType(typeEventHotKeyID),nil,MemoryLayout<EventHotKeyID>.size,nil,&id);let owner=Unmanaged<Workspace>.fromOpaque(context).takeUnretainedValue();DispatchQueue.main.async{switch id.id{case 1:owner.toggle();case 2:owner.model.screenshot();case 3:owner.model.toggleRecording();case 4:owner.model.clip();default:break}};return noErr},1,&type,context,&eventHandler)}
   let mods:UInt32=model.shortcut=="⌃ Espaço" ? UInt32(controlKey):model.shortcut=="⌥⇧ Espaço" ? UInt32(optionKey|shiftKey):UInt32(cmdKey|shiftKey)
