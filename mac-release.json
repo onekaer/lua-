@@ -1,0 +1,5 @@
+{
+  "version": "0.1.0",
+  "minimum_macos": "15.0",
+  "channel": "beta"
+}
