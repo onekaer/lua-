@@ -1,6 +1,6 @@
 {
-  "version": "1.10.1",
+  "version": "1.10.2",
   "base_package": "https://github.com/onekaer/lua-/releases/download/base-v1.9.0/LUA-1.9-Windows-x64.zip",
   "base_sha256": "eac4d41b7cf367256902b9efc4e779843ec25a1bbc95fabc03c97b6ad8925810",
-  "notes": "LUA 1.10.1 Beta — captura e barra simplificadas\n\n- Remove Voltar ao jogo da barra; use Ctrl + Espaço ou seu atalho personalizado para fechar a sobreposição.\n- Remove Mic da janela compacta de captura; Print, clipe e Gravar ocupam três colunas iguais. Ver galeria permanece abaixo. Áudio/microfone continuam configuráveis nas opções de Capturas.\n- Atualiza a prévia de jogo do site com a barra real do aplicativo, imagens atuais e guia visual no GitHub.\n\nCompilação, verificações de interface, atalhos/foco, captura compacta, opções de clipe, jogos, atualizador/rollback e pacote passaram. Veja VALIDACAO.md. A versão continua em beta e sem assinatura digital reconhecida."
+  "notes": "LUA 1.10.2 Beta — ícones alinhados ao Mac\n\n- Analisar PC recebe um ícone de atividade em todas as barras.\n- Capturas recebe câmera com enquadramento para Print, seta circular azul para clipes anteriores e círculo vermelho para Gravar. Ações, atalhos, três colunas e Parar durante a gravação preservados.\n- Site com Baixar para Windows e Baixar para Mac lado a lado no início. Seção grande do Mac removida; imagens, guia e canal Mac mantidos.\n\nCompilação x64 e verificações de interface, captura compacta, foco/atalhos, atualização/rollback e pacote passaram. Veja VALIDACAO.md. Beta sem assinatura digital reconhecida."
 }

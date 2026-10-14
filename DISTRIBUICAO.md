@@ -1,6 +1,6 @@
 # Distribuição, assinatura e SmartScreen
 
-O LUA está em **beta**. A versão 1.10.0 distribuída pelo GitHub ainda não tem assinatura Authenticode de um editor reconhecido. A verificação local retornou `NotSigned`; não havia certificado de assinatura de código disponível nas lojas pessoais consultadas do Windows.
+O LUA está em **beta**. A versão 1.10.2 distribuída pelo GitHub ainda não tem assinatura Authenticode de um editor reconhecido. A verificação local retornou `NotSigned`; não havia certificado de assinatura de código disponível nas lojas pessoais consultadas do Windows.
 
 ## Por que aparece “O Windows protegeu o computador”?
 
