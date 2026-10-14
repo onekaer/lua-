@@ -20,7 +20,7 @@ for folder,architecture in [(arm,'Apple-Silicon'),(intel,'Intel')]:
   shutil.copy2(folder/f,out/(architecture+'-'+f))
 subprocess.run(['codesign','--force','--deep','--sign','-',str(out/'LUA.app')],check=True)
 subprocess.run(['codesign','--verify','--deep','--strict',str(out/'LUA.app')],check=True)
-subprocess.run(['lipo','-verify_arch','arm64','x86_64',str(contents/'MacOS/LUA')],check=True)
+subprocess.run(['lipo',str(contents/'MacOS/LUA'),'-verify_arch','arm64','x86_64'],check=True)
 subprocess.run([str(contents/'MacOS/LUA'),'--verify-media',str(root/'universal-media-check')],check=True)
 package=root/f'LUA-{version}-macOS-universal.zip'
 subprocess.run(['ditto','-c','-k','--sequesterRsrc','--keepParent',str(out),str(package)],check=True)
