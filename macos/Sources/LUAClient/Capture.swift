@@ -11,7 +11,8 @@ final class MovieSink {
  let url:URL
  var start:CMTime?
  init(url:URL,width:Int,height:Int,audio:Bool,mic:Bool) throws {
-  self.url=url;let targetWriter=try AVAssetWriter(outputURL:url,fileType:.mov);writer=targetWriter
+  self.url=url;let type:AVFileType=url.pathExtension.lowercased()=="mp4" ? .mp4:.mov;let targetWriter=try AVAssetWriter(outputURL:url,fileType:type);writer=targetWriter
+  if type == .mp4 {targetWriter.shouldOptimizeForNetworkUse=true}
   video=AVAssetWriterInput(mediaType:.video,outputSettings:[AVVideoCodecKey:AVVideoCodecType.h264,AVVideoWidthKey:width,AVVideoHeightKey:height,AVVideoCompressionPropertiesKey:[AVVideoAverageBitRateKey:8_000_000]])
   video.expectsMediaDataInRealTime=true;guard writer.canAdd(video) else {throw LuaError.message("Codificador de vídeo indisponível.")};writer.add(video)
   func input(_ enabled:Bool)->AVAssetWriterInput? {guard enabled else{return nil};let i=AVAssetWriterInput(mediaType:.audio,outputSettings:[AVFormatIDKey:kAudioFormatMPEG4AAC,AVSampleRateKey:48000,AVNumberOfChannelsKey:2,AVEncoderBitRateKey:128000]);i.expectsMediaDataInRealTime=true;if targetWriter.canAdd(i){targetWriter.add(i);return i};return nil}
@@ -36,11 +37,12 @@ final class CaptureEngine:NSObject,SCStreamOutput,SCStreamDelegate {
  var stream:SCStream?
  var width=1920,height=1080,systemAudio=true,microphone=false
  var buffer:MovieSink?,recording:MovieSink?,segmentStart=0.0
- var segments:[ReplaySegment]=[],segmentPending=0,exporting=false
+ var segments:[ReplaySegment]=[],segmentPending=0,exporting=false,generation=0
  let cache:URL
  var lastImage:CVPixelBuffer?
  var running=false
  var onStatus:((String)->Void)?,onSaved:((URL)->Void)?,onError:((Error)->Void)?
+ var onClipFinished:((Result<URL,Error>)->Void)?
  init(cache:URL){self.cache=cache;super.init()}
  func notify(_ text:String){DispatchQueue.main.async{self.onStatus?(text)}}
  func fail(_ error:Error){DispatchQueue.main.async{self.onError?(error)}}
@@ -51,7 +53,7 @@ final class CaptureEngine:NSObject,SCStreamOutput,SCStreamDelegate {
   guard let display=content.displays.first(where:{$0.displayID==displayID}) ?? content.displays.first else {throw LuaError.message("Nenhuma tela disponível.")}
   width=min(display.width,1920);height=Int(Double(display.height)*Double(width)/Double(display.width));height-=height%2;width-=width%2
   systemAudio=audio;microphone=mic
-  let config=SCStreamConfiguration();config.width=width;config.height=height;config.minimumFrameInterval=CMTime(value:1,timescale:30);config.queueDepth=5;config.showsCursor=true;config.capturesAudio=audio;config.sampleRate=48000;config.channelCount=2;config.excludesCurrentProcessAudio=true;config.captureMicrophone=mic
+  let config=SCStreamConfiguration();config.width=width;config.height=height;config.minimumFrameInterval=CMTime(value:1,timescale:30);config.queueDepth=3;config.showsCursor=true;config.capturesAudio=audio;config.sampleRate=48000;config.channelCount=2;config.excludesCurrentProcessAudio=true;config.captureMicrophone=mic
   // The app's overlay is intentionally included, matching the Windows edition.
   let filter=SCContentFilter(display:display,excludingWindows:[])
   let s=SCStream(filter:filter,configuration:config,delegate:self)
@@ -61,14 +63,18 @@ final class CaptureEngine:NSObject,SCStreamOutput,SCStreamDelegate {
   try FileManager.default.createDirectory(at:cache,withIntermediateDirectories:true)
   stream=s;try await s.startCapture();running=true;notify("Histórico ativo · aguarde os primeiros segundos")
  }
- func stream(_ stream:SCStream,didStopWithError error:Error) {running=false;fail(error);queue.async{self.buffer?.writer.cancelWriting();self.buffer=nil;if let sink=self.recording{self.recording=nil;sink.finish{result in if case .success(let url)=result{DispatchQueue.main.async{self.onSaved?(url)}}}}};notify("Captura interrompida · reative o histórico")}
+ func stream(_ stream:SCStream,didStopWithError error:Error) {guard stream === self.stream else{return};running=false;fail(error);queue.async{self.buffer?.writer.cancelWriting();self.buffer=nil;if let sink=self.recording{self.recording=nil;sink.finish{result in if case .success(let url)=result{DispatchQueue.main.async{self.onSaved?(url)}}}}};notify("Captura interrompida · reative o histórico")}
  func stream(_ stream:SCStream,didOutputSampleBuffer sample:CMSampleBuffer,of type:SCStreamOutputType) {
-  guard sample.isValid else{return}
+  guard stream === self.stream else{return}
+  autoreleasepool {process(sample,type:type)}
+ }
+ func process(_ sample:CMSampleBuffer,type:SCStreamOutputType) {
+  guard sample.isValid,CMSampleBufferGetPresentationTimeStamp(sample).isValid else{return}
   if type == .screen {
    guard let attachments=CMSampleBufferGetSampleAttachmentsArray(sample,createIfNecessary:false) as? [[SCStreamFrameInfo:Any]],let value=attachments.first?[.status] as? Int,value==SCFrameStatus.complete.rawValue,let image=sample.imageBuffer else{return}
    lastImage=image
    let now=CMSampleBufferGetPresentationTimeStamp(sample).seconds
-   if buffer==nil {do{buffer=try newSink(cache.appendingPathComponent(UUID().uuidString+".mov"));segmentStart=now}catch{fail(error)}}
+   if buffer==nil,segmentPending<2 {do{buffer=try newSink(cache.appendingPathComponent(UUID().uuidString+".mov"));segmentStart=now}catch{fail(error)}}
    if now-segmentStart>=3,let old=buffer {
     let available=((try? FileManager.default.attributesOfFileSystem(forPath:cache.path))?[.systemFreeSize] as? NSNumber)?.int64Value ?? Int64.max
     if available<500*1024*1024 {
@@ -77,9 +83,9 @@ final class CaptureEngine:NSObject,SCStreamOutput,SCStreamDelegate {
      Task{try? await self.stream?.stopCapture()}
      fail(LuaError.message("Captura interrompida: menos de 500 MB livres. A gravação recebida foi finalizada."));return
     }
-    let begin=segmentStart;buffer=nil;segmentPending+=1
-    old.finish{result in self.queue.async{self.segmentPending-=1;if case .success(let url)=result{self.segments.append(ReplaySegment(url:url,start:begin,end:now));self.prune(now:now)}else if case .failure(let error)=result{self.fail(error)}}}
-    do{buffer=try newSink(cache.appendingPathComponent(UUID().uuidString+".mov"));segmentStart=now}catch{fail(error)}
+    let begin=segmentStart,session=generation;buffer=nil;segmentPending+=1
+    old.finish{result in self.queue.async{guard self.generation==session else{if case .success(let url)=result{try? FileManager.default.removeItem(at:url)};return};self.segmentPending-=1;if case .success(let url)=result{self.segments.append(ReplaySegment(url:url,start:begin,end:now));self.prune(now:now)}else if case .failure(let error)=result{self.fail(error)}}}
+    if segmentPending<2 {do{buffer=try newSink(cache.appendingPathComponent(UUID().uuidString+".mov"));segmentStart=now}catch{fail(error)}}
    }
   }
   buffer?.append(sample,type:type);recording?.append(sample,type:type)
@@ -93,9 +99,9 @@ final class CaptureEngine:NSObject,SCStreamOutput,SCStreamDelegate {
   guard !self.exporting else{self.fail(LuaError.message("Aguarde o clipe atual terminar."));return}
   let now=self.buffer?.start?.seconds ?? ProcessInfo.processInfo.systemUptime
   let selected=ReplayPolicy.selected(self.segments,now:now,seconds:Double(seconds))
-  guard !selected.isEmpty else{self.fail(LuaError.message("O histórico ainda está preparando os primeiros segundos."));return}
+  guard !selected.isEmpty else{DispatchQueue.main.async{self.onClipFinished?(.failure(LuaError.message("O histórico ainda está preparando os primeiros segundos.")))};return}
   self.exporting=true
-  Task{do{try await Self.join(selected,seconds:seconds,output:url);DispatchQueue.main.async{self.onSaved?(url)}}catch{self.fail(error)};self.queue.async{self.exporting=false}}
+  Task{let result:Result<URL,Error>;do{try await Self.join(selected,seconds:seconds,output:url);result = .success(url)}catch{result = .failure(error)};self.queue.async{self.exporting=false;DispatchQueue.main.async{self.onClipFinished?(result)}}}
  }}
  static func join(_ selected:[ReplaySegment],seconds:Int,output:URL) async throws {
   let composition=AVMutableComposition();guard let video=composition.addMutableTrack(withMediaType:.video,preferredTrackID:kCMPersistentTrackID_Invalid) else{throw LuaError.message("Trilha de vídeo indisponível.")}
@@ -115,5 +121,5 @@ final class CaptureEngine:NSObject,SCStreamOutput,SCStreamDelegate {
   let mix=AVMutableAudioMix();mix.inputParameters=audioTracks.values.map{let p=AVMutableAudioMixInputParameters(track:$0);p.setVolume(1,at:.zero);return p};export.audioMix=mix
   try await export.export(to:output,as:.mp4)
  }
- func stop() async {try? await stream?.stopCapture();stream=nil;running=false;queue.async{self.buffer?.writer.cancelWriting();self.buffer=nil;self.lastImage=nil;self.segments.forEach{try? FileManager.default.removeItem(at:$0.url)};self.segments=[]}}
+ func stop() async {let old=stream;stream=nil;try? await old?.stopCapture();running=false;await withCheckedContinuation{(done:CheckedContinuation<Void,Never>) in queue.async{self.generation+=1;self.segmentPending=0;self.buffer?.writer.cancelWriting();self.buffer=nil;self.lastImage=nil;self.segments.forEach{try? FileManager.default.removeItem(at:$0.url)};self.segments=[];done.resume()}}}
 }

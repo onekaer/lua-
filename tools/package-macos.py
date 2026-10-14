@@ -40,12 +40,13 @@ if True:
   (out/name).write_bytes((root/'macos'/name).read_bytes())
 shutil.copytree(arm/'previews',out/'Prévias',dirs_exist_ok=True)
 for folder,architecture in [(arm,'Apple-Silicon'),(intel,'Intel')]:
- for f in ['tests.txt','media-check.txt','ui-check.txt']:
+ for f in ['tests.txt','media-check.txt','ui-check.txt','startup-check.txt','startup-details.txt']:
   shutil.copy2(folder/f,out/(architecture+'-'+f))
 subprocess.run(['codesign','--force','--deep','--sign','-',str(out/'LUA.app')],check=True)
 subprocess.run(['codesign','--verify','--deep','--strict',str(out/'LUA.app')],check=True)
 subprocess.run(['lipo',str(contents/'MacOS/LUA'),'-verify_arch','arm64','x86_64'],check=True)
 subprocess.run([str(contents/'MacOS/LUA'),'--verify-media',str(root/'universal-media-check')],check=True)
+subprocess.run([str(contents/'MacOS/LUA'),'--verify-startup',str(root/'universal-startup-check')],check=True)
 package=root/f'LUA-{version}-macOS-universal.zip'
 subprocess.run(['ditto','-c','-k','--sequesterRsrc','--keepParent',str(out),str(package)],check=True)
 shutil.make_archive(str(root/'LUA-macOS-previas'),'zip',arm/'previews')
@@ -53,9 +54,11 @@ feed={'version':version,'url':f'https://github.com/onekaer/lua-/releases/downloa
 (root/'LUA-macOS-atualizacoes.json').write_text(json.dumps(feed,indent=2)+'\n')
 (root/'mac-notes.md').write_text(f'''LUA {version} Beta para macOS 15 ou posterior. Aplicativo nativo universal, Apple Silicon e Intel.
 
-CPU/RAM/rede/disco, estado térmico, capturas com ScreenCaptureKit, áudio/microfone, buffer de clipes, galeria, jogos .app/Steam, limpeza de duplicados com revisão, relatório e sobreposição móvel.
+CPU/RAM/rede/disco, estado térmico, capturas MP4 com ScreenCaptureKit, áudio/microfone, buffer de clipes, galeria, jogos .app/Steam, limpeza de duplicados com revisão, relatório e sobreposição móvel.
 
-Testes automatizados executados em runners Mac Apple Silicon e Intel: compilação, regras de segurança, duplicados, atualização, vídeo sintético real H.264 e exportação de clipe. Prévias geradas pelo próprio app nativo, com dados demonstrativos.
+Nesta versão: gravação comum em MP4/H.264/AAC, miniaturas de prints reduzidas antes de decodificar, fila de captura menor, finalizações do histórico limitadas e reinício serializado ao mudar opções. Salvar print ou falhar outra ação não libera o bloqueio de uma exportação de clipe. Estes ajustes tratam riscos encontrados na revisão; sem o relatório de falha não foi possível atribuir a causa do encerramento informado.
+
+Testes automatizados executados em runners Mac Apple Silicon e Intel: compilação, regras de segurança, duplicados, atualização, MP4 sintético H.264/AAC, duas trilhas de áudio, clipe mixado e histórico MOV exportado em MP4. Abertura normal, navegação, sobreposição e fechar/reabrir também verificados. Prévias geradas pelo próprio app nativo, com dados demonstrativos.
 
 Limitações: sem temperatura em °C/uso percentual de GPU garantidos; FPS via HUD Metal da Apple, sem métricas universais/1% low/DLSS. Sem assinatura Developer ID/notarização. Permissões de captura/microfone, jogos reais, tela cheia e desempenho precisam de validação em Mac físico. Não prometemos paridade completa com Windows. Atualizações verificadas com instalação opcional em Aplicativos e backup; instalação fora dessa pasta pode exigir substituição manual.
 

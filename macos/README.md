@@ -1,4 +1,4 @@
-# LUA para macOS 0.1.2 Beta
+# LUA para macOS 0.1.3 Beta
 
 Aplicativo nativo SwiftUI/AppKit, para macOS 15 ou posterior. Binário universal Apple Silicon e Intel. Código próprio sob MIT, sem dependências binárias do Windows.
 
@@ -10,7 +10,7 @@ Extraia o ZIP completo, abra mac-package e mova LUA.app para Aplicativos. O app 
 
 Autorize a gravação da tela/áudio em Ajustes do Sistema → Privacidade e Segurança. O microfone é opcional e pede permissão separada. A gravação de tela só começa após a autorização, e nas próximas aberturas o histórico se prepara automaticamente quando a permissão já foi concedida. Indicadores de privacidade do macOS permanecem ativos.
 
-Print, gravação comum e clipes usam ScreenCaptureKit e AVFoundation. H.264 até 1080p, 30 fps; áudio AAC. O buffer armazena até aproximadamente 120 s, em segmentos temporários de 3 s. O clipe usa somente segmentos completos anteriores: pode terminar até 3 s antes do clique. Nada que ocorreu antes de ativar o histórico pode ser recuperado. Gravação comum e buffer são independentes. A gravação tem indicador com Parar; clipes notificam ao terminar. Sistema e microfone são trilhas independentes no MOV; o MP4 de clipe mixa as trilhas.
+Print, gravação comum e clipes usam ScreenCaptureKit e AVFoundation. Gravações e clipes em MP4, H.264 até 1080p, 30 fps; áudio AAC. Os segmentos temporários do histórico continuam em MOV e não são o vídeo final. O buffer armazena até aproximadamente 120 s, em segmentos temporários de 3 s. O clipe usa somente segmentos completos anteriores: pode terminar até 3 s antes do clique. Nada que ocorreu antes de ativar o histórico pode ser recuperado. Gravação comum e buffer são independentes. A gravação tem indicador com Parar; clipes notificam ao terminar. Sistema e microfone são trilhas independentes no MP4; o MP4 de clipe mixa as trilhas.
 
 Atalhos: Control + Espaço abre/fecha sobreposição; Command + Shift + P tira print; Command + Shift + R inicia/para gravação; Command + Shift + F8 salva clipe. O atalho da sobreposição pode ser alterado para evitar conflito com a troca de idioma do macOS. Fechar o painel não encerra o app; Sair fica na barra de menus.
 
@@ -33,3 +33,9 @@ O GitHub Actions compila e executa testes em macOS Apple Silicon e Intel. Testes
 Compilar em um Mac com Xcode Command Line Tools: `swift test` e `swift build -c release`. O executável fica no caminho informado por `swift build -c release --show-bin-path`. O workflow monta o .app, combina as duas arquiteturas e verifica assinatura local.
 
 Fontes Apple: [ScreenCaptureKit](https://developer.apple.com/documentation/screencapturekit/capturing-screen-content-in-macos) e [Metal Performance HUD](https://developer.apple.com/videos/play/tech-talks/110339/).
+
+## Estabilidade e consumo na beta 0.1.3
+
+Miniaturas de prints são reduzidas para até 440 px antes da decodificação, em trabalho separado da interface. Captura mantém três buffers de tela e limita segmentos simultâneos em finalização a dois, com descarte de objetos temporários a cada callback. Em disco lento o histórico pode ter intervalos; a gravação comum continua independente. Alterações de áudio aguardam a parada da sessão anterior; callbacks antigos são descartados. A lista de aplicativos é renovada a cada 10 s. Salvar um print ou falhar outra ação não libera uma exportação de clipe ainda ativa.
+
+A causa do encerramento informado não foi determinada sem o relatório de falha. Esses ajustes corrigem riscos encontrados no código; não provam que todo encerramento foi resolvido. Os testes do pacote verificam abertura normal, navegação, ciclos da sobreposição, fechar/reabrir, miniatura e bloqueio de exportação, além do MP4 sintético com duas trilhas AAC e clipe mixado. Captura/TCC/jogos em Mac físico continuam pendentes.

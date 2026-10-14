@@ -14,7 +14,7 @@ enum Page:String,CaseIterable,Identifiable,Hashable {
 struct Game:Identifiable,Codable {var id:String{url.path};let name:String;let url:URL;var cover:String?=nil}
 struct Media:Identifiable {var id:String{url.path};let url:URL;let date:Date;let bytes:Int64;var kind:String{url.pathExtension=="png" ? "Prints" : url.lastPathComponent.hasPrefix("Clipe") ? "Clipes":"Vídeos"}}
 @MainActor final class Model:ObservableObject {
- static let version="0.1.2"
+ static let version="0.1.3"
  @Published var page:Page = .home
  @Published var cpu=0.0
  @Published var ramUsed:Int64=0
@@ -27,6 +27,7 @@ struct Media:Identifiable {var id:String{url.path};let url:URL;let date:Date;let
  @Published var notice=""
  @Published var captureStatus="Autorize a captura para preparar o histórico"
  @Published var captureStarting=false
+ @Published var captureReconfiguring=false
  @Published var captureActive=false
  @Published var isRecording=false
  @Published var clipBusy=false
@@ -53,6 +54,7 @@ struct Media:Identifiable {var id:String{url.path};let url:URL;let date:Date;let
  @Published var folder:URL
  var timer:Timer?,scanTask:Task<Void,Never>?
  var oldNet:(UInt64,UInt64,Date)?
+ var lastAppsRefresh=Date.distantPast
  var nextUpdate=Date().addingTimeInterval(21600),retryUpdate=Date.distantPast
  let data:URL,engine:CaptureEngine
  let preview:Bool
@@ -73,12 +75,13 @@ struct Media:Identifiable {var id:String{url.path};let url:URL;let date:Date;let
    let replay=data.appendingPathComponent("Replay");if let list=try? FileManager.default.contentsOfDirectory(at:replay,includingPropertiesForKeys:[.contentModificationDateKey]){for f in list where SafeFiles.contained(f,in:replay){let date=(try? f.resourceValues(forKeys:[.contentModificationDateKey]))?.contentModificationDate ?? Date();if Date().timeIntervalSince(date)>86400{try? FileManager.default.removeItem(at:f)}}}
   }
   engine.onStatus={[weak self] text in self?.captureStatus=text}
-  engine.onError={[weak self] error in self?.notice=error.localizedDescription;self?.clipBusy=false;if self?.engine.running == false{self?.captureActive=false};if self?.engine.recording == nil{self?.isRecording=false;self?.recordingHUD?(false)}}
-  engine.onSaved={[weak self] url in guard let self else{return};self.clipBusy=false;if url.lastPathComponent.hasPrefix("Gravação"){self.isRecording=false;self.recordingHUD?(false)};self.notice="\(url.lastPathComponent) salvo";self.refreshGallery()}
+  engine.onError={[weak self] error in self?.notice=error.localizedDescription;if self?.engine.running == false{self?.captureActive=false};if self?.engine.recording == nil{self?.isRecording=false;self?.recordingHUD?(false)}}
+  engine.onSaved={[weak self] url in guard let self else{return};if url.lastPathComponent.hasPrefix("Gravação"){self.isRecording=false;self.recordingHUD?(false)};self.notice="\(url.lastPathComponent) salvo";self.refreshGallery()}
+  engine.onClipFinished={[weak self] result in guard let self else{return};self.clipBusy=false;switch result{case .success(let url):self.notice="\(url.lastPathComponent) salvo";self.refreshGallery();case .failure(let error):self.notice=error.localizedDescription}}
   if preview{cpu=34;ramUsed=12_400_000_000;ramTotal=32_000_000_000;free=186_000_000_000;total=500_000_000_000;down=5_750_000;up=125_000;cpuHistory=(0..<40).map{30+12*sin(Double($0)/3)};captureStatus="Histórico pronto · 60 s disponíveis";captureActive=true;games=[Game(name:"Jogo Metal · demonstração",url:URL(fileURLWithPath:"/Applications/Exemplo.app"))]}
  }
- func start(){guard !preview else{return};sample();refreshGallery();timer=Timer.scheduledTimer(withTimeInterval:1.5,repeats:true){[weak self] _ in Task{@MainActor in self?.sample()}};Task{await checkUpdates();if CGPreflightScreenCaptureAccess(){await activateCapture(request:false)}}}
- func sample(){if Date()>=nextUpdate{nextUpdate=Date().addingTimeInterval(21600);Task{await checkUpdates()}};if autoUpdates,update != nil,!isRecording,!clipBusy,!updateBusy,Date()>=retryUpdate{retryUpdate=Date().addingTimeInterval(3600);Task{await downloadUpdate()}};let m=lua_metrics();cpu=m.cpu;ramUsed=Int64(m.memoryUsed);ramTotal=Int64(m.memoryTotal);cpuHistory.append(cpu);cpuHistory=Array(cpuHistory.suffix(40));let now=Date();if let old=oldNet,now>old.2{down=m.received>=old.0 ? Double(m.received-old.0)/now.timeIntervalSince(old.2):0;up=m.sent>=old.1 ? Double(m.sent-old.1)/now.timeIntervalSince(old.2):0};oldNet=(m.received,m.sent,now);if let attrs=try? FileManager.default.attributesOfFileSystem(forPath:FileManager.default.homeDirectoryForCurrentUser.path){free=(attrs[.systemFreeSize] as? NSNumber)?.int64Value ?? 0;total=(attrs[.systemSize] as? NSNumber)?.int64Value ?? 0};apps=NSWorkspace.shared.runningApplications.filter{$0.activationPolicy == .regular && !$0.isTerminated}.sorted{($0.localizedName ?? "")<($1.localizedName ?? "")}}
+ func start(){guard !preview else{return};sample();refreshGallery();timer=Timer.scheduledTimer(withTimeInterval:1.5,repeats:true){[weak self] _ in Task{@MainActor in self?.sample()}};Task{await checkUpdates();if !CommandLine.arguments.contains("--verify-startup"),CGPreflightScreenCaptureAccess(){await activateCapture(request:false)}}}
+ func sample(){if Date()>=nextUpdate{nextUpdate=Date().addingTimeInterval(21600);Task{await checkUpdates()}};if autoUpdates,update != nil,!isRecording,!clipBusy,!updateBusy,Date()>=retryUpdate{retryUpdate=Date().addingTimeInterval(3600);Task{await downloadUpdate()}};let m=lua_metrics();cpu=m.cpu;ramUsed=Int64(m.memoryUsed);ramTotal=Int64(m.memoryTotal);cpuHistory.append(cpu);cpuHistory=Array(cpuHistory.suffix(40));let now=Date();if let old=oldNet,now>old.2{down=m.received>=old.0 ? Double(m.received-old.0)/now.timeIntervalSince(old.2):0;up=m.sent>=old.1 ? Double(m.sent-old.1)/now.timeIntervalSince(old.2):0};oldNet=(m.received,m.sent,now);if let attrs=try? FileManager.default.attributesOfFileSystem(forPath:FileManager.default.homeDirectoryForCurrentUser.path){free=(attrs[.systemFreeSize] as? NSNumber)?.int64Value ?? 0;total=(attrs[.systemSize] as? NSNumber)?.int64Value ?? 0};if now.timeIntervalSince(lastAppsRefresh)>=10{lastAppsRefresh=now;apps=NSWorkspace.shared.runningApplications.filter{$0.activationPolicy == .regular && !$0.isTerminated}.sorted{($0.localizedName ?? "")<($1.localizedName ?? "")}}}
  func save(){guard !preview else{return};UserDefaults.standard.set(folder.path,forKey:"lua.captureFolder");UserDefaults.standard.set(audio,forKey:"lua.audio");UserDefaults.standard.set(microphone,forKey:"lua.microphone");UserDefaults.standard.set(autoUpdates,forKey:"lua.autoUpdates");UserDefaults.standard.set(shortcut,forKey:"lua.shortcut");UserDefaults.standard.set(try? JSONEncoder().encode(games),forKey:"lua.games")}
  func chooseFolder(scan:Bool=false){let p=NSOpenPanel();p.canChooseDirectories=true;p.canChooseFiles=false;p.canCreateDirectories=true;p.message=scan ? "Escolha uma pasta pessoal para analisar":"Escolha onde salvar capturas";guard p.runModal() == .OK,let url=p.url else{return};if scan{scanRoot=url;entries=[];duplicates=[];selected=[]}else{folder=url;save();refreshGallery()}}
  func output(_ prefix:String,_ ext:String)throws->URL{try FileManager.default.createDirectory(at:folder,withIntermediateDirectories:true);let df=DateFormatter();df.dateFormat="yyyy-MM-dd HH.mm.ss";return folder.appendingPathComponent("\(prefix) \(df.string(from:Date())) \(UUID().uuidString.prefix(4)).\(ext)")}
@@ -88,9 +91,9 @@ struct Media:Identifiable {var id:String{url.path};let url:URL;let date:Date;let
   if microphone {let allowed=await AVCaptureDevice.requestAccess(for:.audio);guard allowed else{notice="Microfone não autorizado. Desative-o ou permita em Privacidade e Segurança.";return}}
   do{try await engine.start(audio:audio,mic:microphone);captureActive=true}catch{notice=error.localizedDescription}
  }
- func changeCaptureOptions(){save();guard captureActive,!isRecording,!clipBusy else{return};Task{await engine.stop();captureActive=false;await activateCapture(request:false)}}
+ func changeCaptureOptions(){save();guard captureActive,!isRecording,!clipBusy,!captureStarting,!captureReconfiguring else{return};captureReconfiguring=true;Task{defer{captureReconfiguring=false};await engine.stop();captureActive=false;await activateCapture(request:false)}}
  func screenshot(){Task{await activateCapture();guard captureActive else{return};do{engine.screenshot(to:try output("Print","png"))}catch{notice=error.localizedDescription}}}
- func toggleRecording(){if isRecording{engine.stopRecording();return};Task{await activateCapture();guard captureActive else{return};do{let target=try output("Gravação","mov");engine.startRecording(to:target);isRecording=true;recordingHUD?(true)}catch{notice=error.localizedDescription}}}
+ func toggleRecording(){if isRecording{engine.stopRecording();return};Task{await activateCapture();guard captureActive else{return};do{let target=try output("Gravação","mp4");engine.startRecording(to:target);isRecording=true;recordingHUD?(true)}catch{notice=error.localizedDescription}}}
  func clip(){guard !clipBusy else{return};guard captureActive else{notice="Ative o histórico antes do momento que deseja salvar.";return};do{let target=try output("Clipe","mp4");clipBusy=true;engine.clip(seconds:clipSeconds,to:target)}catch{notice=error.localizedDescription}}
  func refreshGallery(){guard !preview else{return};let keys:Set<URLResourceKey>=[.fileSizeKey,.contentModificationDateKey];media=((try? FileManager.default.contentsOfDirectory(at:folder,includingPropertiesForKeys:Array(keys))) ?? []).filter{["mov","mp4","png"].contains($0.pathExtension.lowercased())}.compactMap{u in guard let v=try? u.resourceValues(forKeys:keys) else{return nil};return Media(url:u,date:v.contentModificationDate ?? .distantPast,bytes:Int64(v.fileSize ?? 0))}.sorted{$0.date>$1.date}}
  func trashMedia(_ item:Media){guard confirm("Excluir esta captura?",detail:"\(item.url.lastPathComponent) será enviado à Lixeira.") else{return};do{guard SafeFiles.contained(item.url,in:folder) else{throw LuaError.message("Captura fora da pasta configurada.")};try FileManager.default.trashItem(at:item.url,resultingItemURL:nil);refreshGallery()}catch{notice=error.localizedDescription}}

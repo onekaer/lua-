@@ -52,6 +52,8 @@ jobs:
           mkdir -p artifacts/previews
           cp "$(swift build -c release --show-bin-path)/LUA" artifacts/LUA
           ./artifacts/LUA --verify-media "$RUNNER_TEMP/lua-media-test" | tee artifacts/media-check.txt
+          ./artifacts/LUA --verify-startup "$RUNNER_TEMP/lua-startup-test" | tee artifacts/startup-check.txt
+          cp "$RUNNER_TEMP/lua-startup-test/startup-check.txt" artifacts/startup-details.txt
           ./artifacts/LUA --render artifacts/previews | tee artifacts/ui-check.txt
           cp tests.txt build.txt artifacts/
       - uses: actions/upload-artifact@v4
@@ -125,4 +127,3 @@ jobs:
           path: packaged/site
       - id: deploy
         uses: actions/deploy-pages@v4
-

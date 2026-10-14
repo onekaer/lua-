@@ -4,29 +4,29 @@
 
 [Baixar pelo GitHub Releases](https://github.com/onekaer/lua-/releases/latest) · [Histórico de versões](https://github.com/onekaer/lua-/releases) · [Canal do atualizador](https://github.com/onekaer/lua-/releases/latest/download/LUA-atualizacoes.json)
 
-**Windows 10/11 x64 · Em beta · Versão atual: 1.10.2**
+**Windows 10/11 x64 · Em beta · Versão atual: 1.10.3**
 
 O app está em desenvolvimento. Sensores, captura de FPS e sobreposições dependem do hardware, das permissões e do jogo. A versão atual ainda não possui assinatura digital de um editor reconhecido e pode receber um aviso do SmartScreen. Veja [distribuição e assinatura](DISTRIBUICAO.md).
 
-![Prévia ilustrativa do LUA durante um jogo, com FPS, CPU e GPU](https://onekaer.github.io/lua-/assets/sobreposicao-jogo.svg?v=1.10.2)
+![Prévia ilustrativa do LUA durante um jogo, com FPS, CPU e GPU](https://onekaer.github.io/lua-/assets/sobreposicao-jogo.svg?v=1.10.3)
 
 *Cenário original e métricas demonstrativas; não é um benchmark nem uma captura real de jogo. As imagens das interfaces abaixo são do aplicativo.*
 
 O LUA reúne CPU, GPU, RAM, temperaturas disponíveis, FPS, rede e armazenamento em um aplicativo nativo que abre compacto no canto e permanece na bandeja. Tem painel ampliado, abas personalizáveis e sobreposições com atalhos configuráveis.
 
-## LUA para Mac · 0.1.2 Beta
+## LUA para Mac · 0.1.3 Beta
 
-[**Baixar para macOS — Apple Silicon e Intel**](https://github.com/onekaer/lua-/releases/download/mac-v0.1.2/LUA-0.1.2-macOS-universal.zip) · [Guia Mac e limitações](macos/README.md) · [Ver 15 telas no navegador](https://onekaer.github.io/lua-/mac.html) · [Todas as prévias nativas](https://github.com/onekaer/lua-/releases/download/mac-v0.1.2/LUA-macOS-previas.zip)
+[**Baixar para macOS — Apple Silicon e Intel**](https://github.com/onekaer/lua-/releases/download/mac-v0.1.3/LUA-0.1.3-macOS-universal.zip) · [Guia Mac e limitações](macos/README.md) · [Ver 15 telas no navegador](https://onekaer.github.io/lua-/mac.html) · [Todas as prévias nativas](https://github.com/onekaer/lua-/releases/download/mac-v0.1.3/LUA-macOS-previas.zip)
 
-Aplicativo nativo SwiftUI/AppKit para **macOS 15 ou posterior**. CPU/RAM, rede, espaço livre, análise e duplicados com revisão, biblioteca de jogos .app/Steam, galeria com player/recorte, capturas/áudio/microfone, buffer retroativo, janelas móveis/fixáveis e atualização opcional com backup.
+Aplicativo nativo SwiftUI/AppKit para **macOS 15 ou posterior**. Gravações e clipes em MP4/H.264/AAC. A beta 0.1.3 limita filas/miniaturas, serializa reinícios e preserva o bloqueio durante a exportação de clipes. Sem o relatório técnico, a causa do encerramento relatado não pôde ser determinada. CPU/RAM, rede, espaço livre, análise e duplicados com revisão, biblioteca de jogos .app/Steam, galeria com player/recorte, capturas/áudio/microfone, buffer retroativo, janelas móveis/fixáveis e atualização opcional com backup.
 
 Compilação e testes executados em runners Mac Apple Silicon e Intel. Inclui regras de limpeza/atualização, vídeo sintético H.264, clipe exportado e renderização nativa. As imagens abaixo mostram o app real com números demonstrativos; não são benchmarks.
 
-<img src="https://onekaer.github.io/lua-/assets/mac/inicio.png?v=mac-0.1.2" alt="LUA nativo para Mac, com barra lateral e monitoramento — dados demonstrativos" width="840">
+<img src="https://onekaer.github.io/lua-/assets/mac/inicio.png?v=mac-0.1.3" alt="LUA nativo para Mac, com barra lateral e monitoramento — dados demonstrativos" width="840">
 
-![Barra nativa Mac de sobreposição](https://onekaer.github.io/lua-/assets/mac/barra.png?v=mac-0.1.2)
+![Barra nativa Mac de sobreposição](https://onekaer.github.io/lua-/assets/mac/barra.png?v=mac-0.1.3)
 
-<img src="https://onekaer.github.io/lua-/assets/mac/captura.png?v=mac-0.1.2" alt="Captura Mac com três ações alinhadas e Ver galeria" width="350">
+<img src="https://onekaer.github.io/lua-/assets/mac/captura.png?v=mac-0.1.3" alt="Captura Mac com três ações alinhadas e Ver galeria" width="350">
 
 **Diferenças importantes:** FPS via HUD Metal em jogos compatíveis; sem FPS universal/1% low/DLSS, temperatura em °C ou uso detalhado de GPU nesta beta. Captura real, permissões e desempenho em jogos físicos ainda precisam de validação. Sem assinatura Developer ID/notarização, o Gatekeeper pode bloquear a abertura. Leia o guia antes de instalar; não desative as proteções do macOS.
 
@@ -38,7 +38,7 @@ Compilação e testes executados em runners Mac Apple Silicon e Intel. Inclui re
 - Tráfego de rede e teste de velocidade.
 - Análise de pastas, arquivos grandes, temporários e duplicados com revisão antes da Lixeira.
 - Biblioteca de jogos em grade ou lista, capas oficiais quando disponíveis, filtros, Explorar e desinstalação com confirmação.
-- Gravação de tela, áudio/microfone, prints e buffer de clipes anteriores ao clique.
+- Gravações e clipes em MP4/H.264/AAC, áudio/microfone, prints e histórico anterior ao clique.
 - Galeria por tipo/data, player e corte de trecho.
 - Atualizador com instalação manual ou automática opcional, integridade e backup.
 
@@ -48,13 +48,13 @@ Compilação e testes executados em runners Mac Apple Silicon e Intel. Inclui re
 
 Painel compacto com CPU, GPU, memória, temperaturas disponíveis, rede e espaço livre. Expanda quando quiser mais detalhes ou personalize a barra de abas nas Configurações. A leitura de CPU pode exigir o driver oficial PawnIO e permissão específica para o assistente de sensores.
 
-<img src="https://onekaer.github.io/lua-/assets/inicio.png?v=1.10.2" alt="Início compacto do LUA com temperaturas, hardware e espaço livre" width="340">
+<img src="https://onekaer.github.io/lua-/assets/inicio.png?v=1.10.3" alt="Início compacto do LUA com temperaturas, hardware e espaço livre" width="340">
 
 ### FPS e fluidez
 
 O LUA identifica o jogo reconhecido em foco e acompanha seu FPS com PresentMon, sem uma lista de processos ou botão para iniciar manualmente. Jogos portáteis podem ser adicionados pela pasta da biblioteca. Na imagem, não há jogo ativo: valores ausentes aparecem como `—`. Em Métricas e detecção, escolha 1% low, mínimo e máximo. Mínimo/máximo são as menores/maiores médias de 2 s da sessão; 1% low usa até 600 frames dos últimos 10 s, com mínimo de 100 frames. A presença de uma DLL não confirma DLSS ativo; a comparação com e sem DLSS é manual.
 
-![Página Jogos e FPS com detecção automática, frametime, low, mínimo e máximo](https://onekaer.github.io/lua-/assets/fps.png?v=1.10.2)
+![Página Jogos e FPS com detecção automática, frametime, low, mínimo e máximo](https://onekaer.github.io/lua-/assets/fps.png?v=1.10.3)
 
 ### Sobreposição durante o jogo
 
@@ -64,53 +64,53 @@ Analisar PC usa o ícone de atividade. Capturas usa câmera com enquadramento, h
 
 A barra mostra os ícones reais do app e Digitar; feche a sobreposição pelo atalho. Capturas reúne Print, clipe e Gravar, com Ver galeria abaixo.
 
-![Barra real da sobreposição do LUA](https://onekaer.github.io/lua-/assets/barra.png?v=1.10.2)
+![Barra real da sobreposição do LUA](https://onekaer.github.io/lua-/assets/barra.png?v=1.10.3)
 
-<img src="https://onekaer.github.io/lua-/assets/sobreposicao.png?v=1.10.2" alt="Sobreposição real de hardware; FPS sem captura ativa aparece como traço" width="300">
+<img src="https://onekaer.github.io/lua-/assets/sobreposicao.png?v=1.10.3" alt="Sobreposição real de hardware; FPS sem captura ativa aparece como traço" width="300">
 
-<img src="https://onekaer.github.io/lua-/assets/inicio-sobreposicao.png?v=1.10.2" alt="Visão geral da sobreposição com FPS acima das temperaturas da CPU e GPU" width="340">
+<img src="https://onekaer.github.io/lua-/assets/inicio-sobreposicao.png?v=1.10.3" alt="Visão geral da sobreposição com FPS acima das temperaturas da CPU e GPU" width="340">
 
 ### Capturas e clipes retroativos
 
 Print, gravação comum, áudio/microfone e salvamento do histórico anterior ao clique. Escolha atalhos, qualidade e duração. O buffer precisa estar ativo antes do acontecimento e usa recursos de captura. A gravação comum tem indicador e botão Parar; salvar um clipe usa o histórico existente.
 
-<img src="https://onekaer.github.io/lua-/assets/captura.png?v=1.10.2" alt="Janela compacta de captura com print, clipe, gravação e galeria" width="380">
+<img src="https://onekaer.github.io/lua-/assets/captura.png?v=1.10.3" alt="Janela compacta de captura com print, clipe, gravação e galeria" width="380">
 
 ### Galeria
 
 Vídeos, clipes e prints em áreas separadas. Busque, ordene por data, abra a mídia no player, corte trechos, mostre na pasta ou exclua após revisão. As mídias de demonstração da imagem mostram somente a interface do LUA.
 
-![Galeria com filtros, miniaturas e ações Mostrar na pasta e Excluir](https://onekaer.github.io/lua-/assets/galeria.png?v=1.10.2)
+![Galeria com filtros, miniaturas e ações Mostrar na pasta e Excluir](https://onekaer.github.io/lua-/assets/galeria.png?v=1.10.3)
 
 ### Jogos instalados
 
 Grade como padrão, com alternativa em lista. Capas oficiais quando disponíveis, busca, filtros por plataforma e tamanho, Explorar e opções de capa no menu. A desinstalação pede confirmação e depende da plataforma; pastas portáteis podem ser adicionadas manualmente.
 
-![Biblioteca de jogos com capas reais, plataformas, tamanhos e pesquisa](https://onekaer.github.io/lua-/assets/jogos.png?v=1.10.2)
+![Biblioteca de jogos com capas reais, plataformas, tamanhos e pesquisa](https://onekaer.github.io/lua-/assets/jogos.png?v=1.10.3)
 
 ### Rede e teste de internet
 
 Tráfego de recebimento e envio, interfaces disponíveis, detalhes da conexão e teste de download, upload e latência. O teste de velocidade utiliza dados de teste da Cloudflare.
 
-![Rede e teste de velocidade na interface do LUA](https://onekaer.github.io/lua-/assets/rede.png?v=1.10.2)
+![Rede e teste de velocidade na interface do LUA](https://onekaer.github.io/lua-/assets/rede.png?v=1.10.3)
 
 ### Armazenamento, limpeza e diagnóstico
 
 Veja o espaço livre e analise pastas, arquivos grandes, temporários antigos e duplicados por conteúdo. A limpeza permite selecionar os itens, marcar tudo e revisar antes de enviar à Lixeira. O diagnóstico reúne dados de memória, processador, rede e discos, com exportação de relatório. Uma leitura isolada não determina um defeito e a análise não substitui testes físicos do hardware.
 
-![Armazenamento com espaço livre e análise de uma pasta de exemplo](https://onekaer.github.io/lua-/assets/armazenamento.png?v=1.10.2)
+![Armazenamento com espaço livre e análise de uma pasta de exemplo](https://onekaer.github.io/lua-/assets/armazenamento.png?v=1.10.3)
 
-![Limpeza e duplicados antes da análise, com pasta de exemplo](https://onekaer.github.io/lua-/assets/limpeza.png?v=1.10.2)
+![Limpeza e duplicados antes da análise, com pasta de exemplo](https://onekaer.github.io/lua-/assets/limpeza.png?v=1.10.3)
 
 *As imagens de armazenamento/limpeza usam C:\Exemplo e não mostram arquivos pessoais.*
 
-![Diagnóstico local do LUA com memória, CPU, espaço livre e conexão](https://onekaer.github.io/lua-/assets/analise.png?v=1.10.2)
+![Diagnóstico local do LUA com memória, CPU, espaço livre e conexão](https://onekaer.github.io/lua-/assets/analise.png?v=1.10.3)
 
 ### Configurações e atualizações
 
 Seções retráteis para navegação, sobreposições e atalhos. Atualizações ficam no último grupo, junto de Sobre o LUA. Uma versão nova gera notificação e botão azul Atualizar ao lado das Configurações no painel grande ou pequeno no rodapé compacto. Instalar automaticamente é opcional. O atalho de desktop é criado na primeira abertura e pode ser recriado nessa seção.
 
-![Parte final das Configurações: atualização, informações do LUA e atalho de desktop](https://onekaer.github.io/lua-/assets/configuracoes.png?v=1.10.2)
+![Parte final das Configurações: atualização, informações do LUA e atalho de desktop](https://onekaer.github.io/lua-/assets/configuracoes.png?v=1.10.3)
 
 ## Instalar
 
