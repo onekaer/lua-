@@ -23,6 +23,9 @@ if mac_spec.is_file():
             (root/'mac-update.json').write_text(json.dumps(feed,indent=2)+'\n')
             dest=root/'assets/mac';dest.mkdir(parents=True,exist_ok=True)
             with zipfile.ZipFile(Path(tmp)/'LUA-macOS-previas.zip') as z:
+                for name in z.namelist():
+                    if re.fullmatch(r'(\d{2}-[a-z-]+|barra|captura|widget-inicio)\.png',name):
+                        (dest/name).write_bytes(z.read(name))
                 for source,target in {'00-home.png':'inicio.png','barra.png':'barra.png','captura.png':'captura.png','09-gallery.png':'galeria.png','11-settings.png':'configuracoes.png'}.items():
                     (dest/target).write_bytes(z.read(source))
             print('Canal e imagens macOS',mac_version,'atualizados')
