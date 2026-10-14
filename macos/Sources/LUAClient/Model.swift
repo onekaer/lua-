@@ -14,7 +14,7 @@ enum Page:String,CaseIterable,Identifiable,Hashable {
 struct Game:Identifiable,Codable {var id:String{url.path};let name:String;let url:URL;var cover:String?=nil}
 struct Media:Identifiable {var id:String{url.path};let url:URL;let date:Date;let bytes:Int64;var kind:String{url.pathExtension=="png" ? "Prints" : url.lastPathComponent.hasPrefix("Clipe") ? "Clipes":"Vídeos"}}
 @MainActor final class Model:ObservableObject {
- static let version="0.1.0"
+ static let version="0.1.1"
  @Published var page:Page = .home
  @Published var cpu=0.0
  @Published var ramUsed:Int64=0
@@ -56,6 +56,7 @@ struct Media:Identifiable {var id:String{url.path};let url:URL;let date:Date;let
  var nextUpdate=Date().addingTimeInterval(21600),retryUpdate=Date.distantPast
  let data:URL,engine:CaptureEngine
  let preview:Bool
+ var resize:((Bool)->Void)?
  var openOverlay:(()->Void)?,updateShortcuts:(()->Void)?,recordingHUD:((Bool)->Void)?
  init(preview:Bool=false,dataOverride:URL?=nil){
   self.preview=preview

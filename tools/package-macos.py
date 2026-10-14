@@ -10,6 +10,30 @@ for folder in [arm,intel]:
 subprocess.run(['lipo','-create',str(arm/'LUA'),str(intel/'LUA'),'-output',str(contents/'MacOS/LUA')],check=True)
 (contents/'MacOS/LUA').chmod(0o755)
 plist={'CFBundleName':'LUA','CFBundleDisplayName':'LUA','CFBundleIdentifier':'app.lua.monitor','CFBundleExecutable':'LUA','CFBundlePackageType':'APPL','CFBundleShortVersionString':version,'CFBundleVersion':version,'LSMinimumSystemVersion':'15.0','NSHighResolutionCapable':True,'NSMicrophoneUsageDescription':'Inclua sua voz nas gravações e clipes somente quando a opção de microfone estiver ativada.','NSScreenCaptureUsageDescription':'Capture prints, grave vídeos e mantenha o histórico de clipes que você autorizou.','NSPrincipalClass':'NSApplication'}
+icon_script=root/'draw-lua-icon.swift'
+icon_script.write_text('''import AppKit
+let image=NSImage(size:NSSize(width:1024,height:1024))
+image.lockFocus()
+NSColor(calibratedRed:0.075,green:0.085,blue:0.12,alpha:1).setFill()
+NSBezierPath(roundedRect:NSRect(x:20,y:20,width:984,height:984),xRadius:220,yRadius:220).fill()
+NSColor(calibratedRed:0.48,green:0.66,blue:1,alpha:1).setFill()
+NSBezierPath(ovalIn:NSRect(x:210,y:190,width:600,height:600)).fill()
+NSColor(calibratedRed:0.075,green:0.085,blue:0.12,alpha:1).setFill()
+NSBezierPath(ovalIn:NSRect(x:365,y:370,width:520,height:520)).fill()
+NSColor(calibratedRed:0.75,green:0.85,blue:1,alpha:1).setFill()
+let star=NSBezierPath();star.move(to:NSPoint(x:745,y:820));star.line(to:NSPoint(x:770,y:755));star.line(to:NSPoint(x:835,y:730));star.line(to:NSPoint(x:770,y:705));star.line(to:NSPoint(x:745,y:640));star.line(to:NSPoint(x:720,y:705));star.line(to:NSPoint(x:655,y:730));star.line(to:NSPoint(x:720,y:755));star.close();star.fill()
+image.unlockFocus()
+let rep=NSBitmapImageRep(data:image.tiffRepresentation!)!
+try rep.representation(using:.png,properties:[:])!.write(to:URL(fileURLWithPath:CommandLine.arguments[1]))
+''')
+icon_png=root/'lua-icon.png';subprocess.run(['swift',str(icon_script),str(icon_png)],check=True)
+iconset=root/'LUA.iconset';iconset.mkdir(exist_ok=True)
+for size in [16,32,128,256,512]:
+    for scale in [1,2]:
+        pixels=size*scale;name=f'icon_{size}x{size}'+('@2x' if scale==2 else '')+'.png'
+        subprocess.run(['sips','-z',str(pixels),str(pixels),str(icon_png),'--out',str(iconset/name)],check=True,stdout=subprocess.DEVNULL)
+subprocess.run(['iconutil','-c','icns',str(iconset),'-o',str(contents/'Resources/LUA.icns')],check=True)
+plist['CFBundleIconFile']='LUA'
 (contents/'Info.plist').write_bytes(plistlib.dumps(plist))
 with zipfile.ZipFile(root/'lua-source.zip') as z:
  for name in ['README.md','LICENSE.txt','VALIDACAO.md']:

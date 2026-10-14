@@ -23,6 +23,9 @@ jobs:
         run: ./tools/build-release.ps1
   page:
     needs: release
+    concurrency:
+      group: lua-pages
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     permissions:
       contents: read

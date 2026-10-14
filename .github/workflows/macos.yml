@@ -10,7 +10,28 @@ concurrency:
   group: lua-macos
   cancel-in-progress: true
 jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      build: ${{ steps.plan.outputs.build }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(python3 -c 'import json; print(json.load(open("mac-release.json"))["version"])')
+          TAG="mac-v$VERSION"
+          if gh release view "$TAG" --json isDraft 2>/dev/null | grep -q '"isDraft":false'; then
+            git fetch --depth=1 origin "refs/tags/$TAG"
+            git diff --exit-code FETCH_HEAD HEAD -- macos/Sources macos/Package.swift || { echo 'Incremente a versão Mac antes de alterar um binário publicado.'; exit 1; }
+            echo 'build=false' >> "$GITHUB_OUTPUT"
+          else
+            echo 'build=true' >> "$GITHUB_OUTPUT"
+          fi
   native:
+    needs: plan
+    if: needs.plan.outputs.build == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -64,3 +85,33 @@ jobs:
           gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --target "$GITHUB_SHA" --title "LUA $VERSION Beta para macOS" --notes-file mac-notes.md --draft --prerelease
           gh release upload "$TAG" "LUA-$VERSION-macOS-universal.zip" LUA-macOS-atualizacoes.json LUA-macOS-previas.zip --clobber
           gh release edit "$TAG" --draft=false --prerelease --latest=false --notes-file mac-notes.md
+  page:
+    needs: [plan, package]
+    if: always() && needs.plan.result == 'success' && (needs.plan.outputs.build == 'false' || needs.package.result == 'success')
+    runs-on: ubuntu-latest
+    concurrency:
+      group: lua-pages
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preparar página Windows e Mac
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          unzip -q lua-source.zip -d packaged
+          VERSION=$(python3 -c 'import json; print(json.load(open("release.json"))["version"])')
+          gh release view "v$VERSION" --repo "$GITHUB_REPOSITORY" --json tagName,assets,publishedAt > published-release.json
+          python3 tools/prepare-site.py packaged/site published-release.json
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: packaged/site
+      - id: deploy
+        uses: actions/deploy-pages@v4
