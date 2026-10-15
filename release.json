@@ -1,6 +1,6 @@
 {
-  "version": "1.10.3",
+  "version": "1.10.4",
   "base_package": "https://github.com/onekaer/lua-/releases/download/base-v1.9.0/LUA-1.9-Windows-x64.zip",
   "base_sha256": "eac4d41b7cf367256902b9efc4e779843ec25a1bbc95fabc03c97b6ad8925810",
-  "notes": "LUA 1.10.3 Beta — formato das capturas\n\nCapturas identifica MP4/H.264/AAC. Gravação comum, clipes e cortes já salvavam o resultado em MP4 no Windows; gravação e clipe reais foram conferidos nesta rodada, incluindo contêiner e leitura no FFprobe. O intermediário MKV continua protegendo o vídeo em caso de falha ou pouco espaço.\n\nCompilação x64, pacote e prévias passaram. Vídeos de teste não são publicados. Beta sem assinatura digital reconhecida."
+  "notes": "LUA 1.10.4 Beta — temperatura sem autorização repetida\n\nLeitura permanente opcional: instale um serviço pelo botão em Configurações > Temperatura da CPU e permissões > Configurar leitura da CPU. Uma confirmação do Windows instala o serviço; ele inicia com o PC e mantém o painel sem elevação. Pode ser reparado ou removido no mesmo lugar. UAC permanece ativo. Sem serviço, o LUA não solicita elevação automaticamente ao iniciar. Sessão já conectada é reutilizada.\n\nArquivos protegidos, dependências verificadas e telemetria local somente de leitura. O driver PawnIO é separado, assim como a permissão de FPS. Reparos/driver podem pedir nova autorização. Compilação e testes de pacote/interface passaram; o pipeline confere instalação, reconexão, reinício do serviço e remoção. Reboot físico não testado. Beta sem assinatura reconhecida."
 }
