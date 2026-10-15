@@ -25,6 +25,20 @@ $luaChecks=Join-Path $luaStage 'checks'
 $luaProcess=Start-Process -FilePath (Join-Path $luaApp 'LUA.exe') -ArgumentList @('--verify-package','--data',('"'+$luaChecks+'"')) -WindowStyle Hidden -Wait -PassThru
 if($luaProcess.ExitCode -ne 0 -or -not (Select-String -LiteralPath (Join-Path $luaChecks 'package-checks.txt') -SimpleMatch 'RESULTADO: PASSOU')){throw 'Verificação do pacote falhou.'}
 Copy-Item -LiteralPath (Join-Path $luaChecks 'package-checks.txt') -Destination (Join-Path $luaApp 'VERIFICACAO-CI.txt')
+$luaSensorHost=Join-Path $luaApp 'LuaSensorsHost.exe'
+function Invoke-LuaSensorHost([string]$Argument){$luaErrorLog=Join-Path $luaStage 'sensor-errors.txt';$luaSensorProcess=Start-Process -FilePath $luaSensorHost -ArgumentList $Argument -WindowStyle Hidden -RedirectStandardError $luaErrorLog -Wait -PassThru;if($luaSensorProcess.ExitCode -ne 0){Get-Content -LiteralPath $luaErrorLog;throw ('Teste do serviço de sensores falhou: '+$Argument+' / '+$luaSensorProcess.ExitCode)}}
+# Installation is tested only on this disposable administrator runner, never on users' PCs.
+try {
+    Invoke-LuaSensorHost '--install-service'
+    Invoke-LuaSensorHost '--verify-service'
+    $luaBridgeTest=Start-Process -FilePath (Join-Path $luaApp 'LUA.exe') -ArgumentList @('--verify-sensor-service','--data',('"'+$luaChecks+'"')) -WindowStyle Hidden -Wait -PassThru
+    if($luaBridgeTest.ExitCode -ne 0){throw 'Reconectar o painel criou outro assistente ou perdeu telemetria.'}
+    Stop-Service -Name LuaCpuSensors
+    Start-Service -Name LuaCpuSensors
+    Invoke-LuaSensorHost '--verify-service'
+    [IO.File]::WriteAllText((Join-Path $luaApp 'VERIFICACAO-SERVICO-CI.txt'),'PASSOU: instalar serviço, ACL protegida, telemetria recente, parar e iniciar novamente. O runner não valida reinício físico nem temperatura em hardware do usuário.',[Text.UTF8Encoding]::new($false))
+} finally {Invoke-LuaSensorHost '--remove-service'}
+if(Get-Service -Name LuaCpuSensors -ErrorAction SilentlyContinue){throw 'O serviço de teste não foi removido.'}
 $luaManifest=Get-ChildItem -LiteralPath $luaApp -Recurse -File | Where-Object Name -ne 'SHA256SUMS.txt' | Sort-Object FullName | ForEach-Object {(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()+'  '+$_.FullName.Substring($luaApp.Length+1).Replace('\','/')}
 [IO.File]::WriteAllLines((Join-Path $luaApp 'SHA256SUMS.txt'),$luaManifest,[Text.UTF8Encoding]::new($false))
 $luaPackageName='LUA-'+$luaVersion+'-Windows-x64.zip'
@@ -40,3 +54,4 @@ gh release upload $luaTag $luaPackage $luaFeedPath --repo $env:GITHUB_REPOSITORY
 if($LASTEXITCODE -ne 0){throw 'Falha ao enviar os arquivos da versão.'}
 gh release edit $luaTag --repo $env:GITHUB_REPOSITORY --draft=false --latest --notes-file $luaNotes
 if($LASTEXITCODE -ne 0){throw 'Falha ao publicar a versão.'}
+
