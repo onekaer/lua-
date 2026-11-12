@@ -4,7 +4,7 @@
 
 [Baixar pelo GitHub Releases](https://github.com/onekaer/lua-/releases/latest) · [Histórico de versões](https://github.com/onekaer/lua-/releases) · [Canal do atualizador](https://github.com/onekaer/lua-/releases/latest/download/LUA-atualizacoes.json)
 
-**Windows 10/11 x64 · Em beta · Versão atual: 1.10.5**
+**Windows 10/11 x64 · Em beta · Versão atual: 1.11.0**
 
 O app está em desenvolvimento. Sensores, captura de FPS e sobreposições dependem do hardware, das permissões e do jogo. A versão atual ainda não possui assinatura digital de um editor reconhecido e pode receber um aviso do SmartScreen. Veja [distribuição e assinatura](DISTRIBUICAO.md).
 
@@ -92,6 +92,16 @@ Grade como padrão, com alternativa em lista. Capas oficiais quando disponíveis
 
 ![Biblioteca de jogos com capas reais, plataformas, tamanhos e pesquisa](https://onekaer.github.io/lua-/assets/jogos.png?v=1.10.5)
 
+### Horas jogadas e contas
+
+O LUA acompanha jogos reconhecidos em execução, inclusive quando abertos por outros launchers, atalhos ou executáveis. Mantenha o aplicativo aberto, inclusive na bandeja. Use **Adicionar executável / emulador** para jogos portáteis ou instalados pelo Hydra. A biblioteca exibe sessão atual, total por jogo, histórico e ordenação por horas.
+
+**Steam deste PC** lê as horas locais das contas para jogos instalados identificados. **Importar conta Steam** consulta a Web API com SteamID64 e chave pessoal temporária. As outras plataformas permitem informar horas por conta ou importar um JSON revisado. Login e importação remota de horas de Xbox, Epic, Battle.net, Riot, EA, Ubisoft e Rockstar ainda não estão integrados.
+
+RPCS3, PPSSPP, Ryujinx, Cemu e mGBA têm reconhecimento automático em formatos de janela suportados. Outros emuladores podem ser cadastrados por executável e identificador exibido na janela. O acompanhamento mede o tempo em execução, incluindo pausas dentro do jogo. Leia o guia HORAS-JOGADAS.md incluído no pacote para importação, consolidação e limites.
+
+![Interface de horas jogadas do LUA com dados demonstrativos](https://onekaer.github.io/lua-/assets/horas.png?v=1.11.0)
+
 ### Rede e teste de internet
 
 Tráfego de recebimento e envio, interfaces disponíveis, detalhes da conexão e teste de download, upload e latência. O teste de velocidade utiliza dados de teste da Cloudflare.
@@ -153,3 +163,4 @@ Serviço opcional LuaCpuSensors, com arquivos protegidos em Program Files e comu
 CPU e RAM vêm com avisos **desativados por padrão**. Na primeira abertura da versão 1.10.5, a configuração antiga é desativada uma vez; se você ativar depois, sua escolha fica salva. A opção fica em **Configurações > Avisos de atenção**. Não há notificações de disco. Capturas ainda são finalizadas por pouco espaço, preservando o vídeo e mostrando o estado no painel. Avisos de atualização e confirmações de ações continuam independentes.
 
 <img src="https://onekaer.github.io/lua-/assets/avisos.png?v=1.10.5" alt="Configuração dos avisos opcionais de CPU e RAM, desmarcada por padrão" width="440">
+

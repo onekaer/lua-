@@ -25,6 +25,10 @@ $luaChecks=Join-Path $luaStage 'checks'
 $luaProcess=Start-Process -FilePath (Join-Path $luaApp 'LUA.exe') -ArgumentList @('--verify-package','--data',('"'+$luaChecks+'"')) -WindowStyle Hidden -Wait -PassThru
 if($luaProcess.ExitCode -ne 0 -or -not (Select-String -LiteralPath (Join-Path $luaChecks 'package-checks.txt') -SimpleMatch 'RESULTADO: PASSOU')){throw 'Verificação do pacote falhou.'}
 Copy-Item -LiteralPath (Join-Path $luaChecks 'package-checks.txt') -Destination (Join-Path $luaApp 'VERIFICACAO-CI.txt')
+$luaPlaytimeProcess=Start-Process -FilePath (Join-Path $luaApp 'LUA.exe') -ArgumentList @('--verify','--verify-playtime','--data',('"'+$luaChecks+'"')) -WindowStyle Hidden -Wait -PassThru
+$luaPlaytimeReport=Join-Path $luaChecks 'verification/checks.txt'
+if($luaPlaytimeProcess.ExitCode -ne 0 -or -not (Select-String -LiteralPath $luaPlaytimeReport -SimpleMatch 'RESULTADO: PASSOU')){throw 'Verificação integrada das horas jogadas falhou.'}
+Copy-Item -LiteralPath $luaPlaytimeReport -Destination (Join-Path $luaApp 'VERIFICACAO-HORAS-CI.txt')
 $luaSensorHost=Join-Path $luaApp 'LuaSensorsHost.exe'
 function Invoke-LuaSensorHost([string]$Argument){$luaErrorLog=Join-Path $luaStage 'sensor-errors.txt';$luaSensorProcess=Start-Process -FilePath $luaSensorHost -ArgumentList $Argument -WindowStyle Hidden -RedirectStandardError $luaErrorLog -Wait -PassThru;if($luaSensorProcess.ExitCode -ne 0){Get-Content -LiteralPath $luaErrorLog;throw ('Teste do serviço de sensores falhou: '+$Argument+' / '+$luaSensorProcess.ExitCode)}}
 # Installation is tested only on this disposable administrator runner, never on users' PCs.
@@ -54,4 +58,5 @@ gh release upload $luaTag $luaPackage $luaFeedPath --repo $env:GITHUB_REPOSITORY
 if($LASTEXITCODE -ne 0){throw 'Falha ao enviar os arquivos da versão.'}
 gh release edit $luaTag --repo $env:GITHUB_REPOSITORY --draft=false --latest --notes-file $luaNotes
 if($LASTEXITCODE -ne 0){throw 'Falha ao publicar a versão.'}
+
 
