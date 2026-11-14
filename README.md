@@ -114,7 +114,7 @@ A janela grande mostra **Início**, **Jogos** e **Capturas** na lateral. O grupo
 
 Em **Configurações → Barra de tarefas → Personalizar barra de tarefas**, escolha a posição, o monitor, a cor e até três indicadores. Ative **Mostrar apenas o ícone da lua** para liberar espaço. A seleção dos cartões do painel é independente da cápsula.
 
-Passe o mouse na cápsula para consultar a prévia sobre a barra. Clique na lua para abrir a janela grande. O modo compacto continua disponível no botão de tamanho da janela e no menu da bandeja. A cápsula ocupa uma faixa livre junto aos controles do Windows e aparece nas capturas do monitor.
+Passe o mouse na cápsula para consultar a prévia sobre a barra. Clique na lua para abrir o menu compacto junto à barra e clique de novo para recolhê-lo. O botão de modo alterna entre o painel compacto e a janela grande. O quadrado maximiza a janela ou restaura o tamanho anterior. A cápsula ocupa uma faixa livre junto aos controles do Windows e aparece nas capturas do monitor.
 
 Nos cartões, use Volume para controlar a saída padrão do Windows. Para o clima, selecione uma cidade. As condições são consultadas no Open-Meteo. [Open-Meteo](https://open-meteo.com/)
 
