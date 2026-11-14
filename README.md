@@ -108,6 +108,14 @@ RPCS3, PPSSPP, Ryujinx, Cemu e mGBA têm reconhecimento automático em formatos 
 
 ![Interface de horas jogadas do LUA com dados demonstrativos](https://onekaer.github.io/lua-/assets/horas.png?v=1.12.0)
 
+### Widget da barra de tarefas
+
+Em **Configurações → Widget da barra de tarefas**, ative a cápsula e personalize o lado, a distância da borda, o monitor, a cor e a ordem das métricas. Passe o mouse para ver o painel e clique na cápsula para fixar ou recolher. A engrenagem abre o editor, que também está no menu do ícone do LUA na bandeja.
+
+O widget fica junto à barra de tarefas enquanto o LUA está em execução e se recolhe ao abrir um aplicativo em tela cheia no mesmo monitor. As três primeiras métricas aparecem na cápsula. As demais aparecem no painel expandido.
+
+<img src="https://onekaer.github.io/lua-/assets/widget-barra.png?v=1.12.0" width="340" alt="Widget expandido do LUA com dados demonstrativos">
+
 ### Rede e teste de internet
 
 Tráfego de recebimento e envio, interfaces disponíveis, detalhes da conexão e teste de download, upload e latência. O teste de velocidade utiliza dados de teste da Cloudflare.
