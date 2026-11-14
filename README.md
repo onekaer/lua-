@@ -110,7 +110,7 @@ RPCS3, PPSSPP, Ryujinx, Cemu e mGBA têm reconhecimento automático em formatos 
 
 ### Widget da barra de tarefas
 
-Em **Configurações → Widget da barra de tarefas**, ative a cápsula e personalize o lado, a distância da borda, o monitor, a cor e a ordem das métricas. Passe o mouse para ver o painel e clique na cápsula para fixar ou recolher. O botão **Editar widgets** e a engrenagem abrem o editor. Escolha e reordene volume, clima, bateria, relógio, tempo ligado e as métricas do computador. O volume controla a saída padrão do Windows. Para o clima, busque e selecione uma cidade. Os dados são do [Open-Meteo](https://open-meteo.com/).
+Em **Configurações → Widget da barra de tarefas**, ative a cápsula e personalize o lado, a distância da borda, o monitor, a cor e a ordem das métricas. Passe o mouse para ver o painel e clique na cápsula para fixar ou recolher. O ícone de lápis no cabeçalho abre **Editar widgets**. Escolha e reordene volume, clima, bateria, relógio, tempo ligado e as métricas do computador. O volume controla a saída padrão do Windows. Para o clima, busque e selecione uma cidade. Os dados são do [Open-Meteo](https://open-meteo.com/).
 
 A cápsula ocupa um espaço livre na faixa da barra, ao lado do clima ou antes da área de notificação. Se faltar espaço, ela fica oculta. A cápsula e o painel aberto aparecem nos prints do monitor selecionado. As três primeiras métricas aparecem na cápsula. As demais aparecem no painel expandido.
 
