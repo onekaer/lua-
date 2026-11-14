@@ -108,11 +108,15 @@ RPCS3, PPSSPP, Ryujinx, Cemu e mGBA têm reconhecimento automático em formatos 
 
 ![Interface de horas jogadas do LUA com dados demonstrativos](https://onekaer.github.io/lua-/assets/horas.png?v=1.12.0)
 
-### Widget da barra de tarefas
+### Barra de tarefas e painel do LUA
 
-Em **Configurações → Widget da barra de tarefas**, ative a cápsula e personalize o lado, a distância da borda, o monitor, a cor e a ordem das métricas. Passe o mouse para ver o painel e clique na cápsula para fixar ou recolher. O ícone de lápis no cabeçalho abre **Editar widgets**. Escolha e reordene volume, clima, bateria, relógio, tempo ligado e as métricas do computador. O volume controla a saída padrão do Windows. Para o clima, busque e selecione uma cidade. Os dados são do [Open-Meteo](https://open-meteo.com/).
+A navegação principal tem quatro áreas. **Início** reúne as métricas, **Jogos** reúne biblioteca, sessões e FPS, **Capturas** concentra gravação, clipes, prints e galeria, e **Ferramentas** agrupa processos, diagnóstico, rede e armazenamento.
 
-A cápsula ocupa um espaço livre na faixa da barra, ao lado do clima ou antes da área de notificação. Se faltar espaço, ela fica oculta. A cápsula e o painel aberto aparecem nos prints do monitor selecionado. As três primeiras métricas aparecem na cápsula. As demais aparecem no painel expandido.
+Em **Configurações → Barra de tarefas → Personalizar barra de tarefas**, escolha a posição, o monitor, a cor e até três indicadores. Ative **Mostrar apenas o ícone da lua** para liberar espaço. A seleção dos cartões do painel é independente da cápsula.
+
+Passe o mouse na cápsula para consultar a prévia. Clique para abrir o menu do LUA sobre a barra e clique de novo para recolhê-lo. O botão de expandir abre a página ativa em uma janela maior. A cápsula ocupa uma faixa livre junto aos controles do Windows e aparece nas capturas do monitor.
+
+Nos cartões, use Volume para controlar a saída padrão do Windows. Para o clima, selecione uma cidade. As condições são consultadas no Open-Meteo. [Open-Meteo](https://open-meteo.com/)
 
 <img src="https://onekaer.github.io/lua-/assets/widget-barra.png?v=1.12.0" width="340" alt="Widget expandido do LUA com dados demonstrativos">
 
@@ -136,7 +140,7 @@ Veja o espaço livre e analise pastas, arquivos grandes, temporários antigos e 
 
 ### Configurações e atualizações
 
-Seções retráteis para navegação, sobreposições e atalhos. Atualizações ficam no último grupo, junto de Sobre o LUA. Uma versão nova gera notificação e botão azul Atualizar ao lado das Configurações no painel grande ou pequeno no rodapé compacto. Instalar automaticamente é opcional. O atalho de desktop é criado na primeira abertura e pode ser recriado nessa seção.
+A engrenagem reúne preferências gerais, barra de tarefas, sobreposição, captura, sensores e atualizações. Atualizações ficam no último grupo, junto de Sobre o LUA. Uma versão nova gera notificação e botão azul Atualizar ao lado das Configurações no painel grande ou pequeno no rodapé compacto. Instalar automaticamente é opcional. O atalho de desktop é criado na primeira abertura e pode ser recriado nessa seção.
 
 ![Parte final das Configurações: atualização, informações do LUA e atalho de desktop](https://onekaer.github.io/lua-/assets/configuracoes.png?v=1.12.0)
 
@@ -144,7 +148,7 @@ Seções retráteis para navegação, sobreposições e atalhos. Atualizações 
 
 Windows 10/11 x64 com .NET Framework 4.8. Baixe o ZIP completo, extraia toda a pasta e abra `LUA.exe`; o atalho é criado na Área de Trabalho. Se uma versão antiga ainda estiver aberta, use Sair na bandeja antes de abrir a pasta nova, ou utilize o atualizador do próprio app. Mantenha bibliotecas, ícones e ferramentas juntos. Para atualizar uma versão antiga sem canal configurado, use Sair na bandeja antes de abrir a nova.
 
-CPU: instale o PawnIO oficial quando necessário. Em Configurações > Temperatura da CPU e permissões > Configurar leitura da CPU, escolha Ativar leitura permanente. Autorize a instalação do serviço uma vez; depois ele inicia com o Windows. É opcional e removível. Sem serviço, a leitura elevada exige ação manual, sem avisos automáticos ao iniciar. Reparar o serviço ou instalar o driver pode pedir nova autorização. FPS: abra um jogo reconhecido da biblioteca e aceite a permissão de LuaFpsCapture.exe quando solicitada. Cancelar não causa pedidos repetidos: use Reativar detecção de FPS para tentar novamente. A presença de DLL de DLSS não confirma a tecnologia ativa; a comparação disponível é manual.
+CPU: instale o PawnIO oficial quando necessário. Em Configurações > Avançado > Temperatura da CPU e permissões > Configurar leitura da CPU, escolha Ativar leitura permanente. Autorize a instalação do serviço uma vez; depois ele inicia com o Windows. É opcional e removível. Sem serviço, a leitura elevada exige ação manual, sem avisos automáticos ao iniciar. Reparar o serviço ou instalar o driver pode pedir nova autorização. FPS: abra um jogo reconhecido da biblioteca e aceite a permissão de LuaFpsCapture.exe quando solicitada. Cancelar não causa pedidos repetidos: use Reativar detecção de FPS para tentar novamente. A presença de DLL de DLSS não confirma a tecnologia ativa; a comparação disponível é manual.
 
 O buffer só guarda o que ocorreu enquanto estava ativo e consome recursos de captura. Clipes podem terminar cerca de 1 s antes do clique porque o último segmento aberto é excluído. Tela cheia exclusiva pode impedir a sobreposição; prefira janela sem bordas.
 
