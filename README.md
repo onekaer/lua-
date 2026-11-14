@@ -94,7 +94,7 @@ Vídeos, clipes e prints em áreas separadas. Busque, ordene por data, abra a m�
 
 ### Jogos instalados
 
-Grade como padrão, com alternativa em lista. Capas oficiais quando disponíveis, busca, filtros por plataforma e tamanho, Explorar e opções de capa no menu. A desinstalação pede confirmação e depende da plataforma; pastas portáteis podem ser adicionadas manualmente.
+A biblioteca abre em grade com pôsteres verticais 2:3 e aceita visualização em lista. Usa capas oficiais quando disponíveis e mantém a arte horizontal inteira. Busca, filtros, Explorar e troca de capa ficam na biblioteca. A desinstalação pede confirmação e depende da plataforma; pastas portáteis podem ser adicionadas manualmente.
 
 ![Biblioteca de jogos com horas, tamanhos e pesquisa, usando dados demonstrativos](https://onekaer.github.io/lua-/assets/jogos.png?v=1.12.0)
 
@@ -110,11 +110,11 @@ RPCS3, PPSSPP, Ryujinx, Cemu e mGBA têm reconhecimento automático em formatos 
 
 ### Barra de tarefas e painel do LUA
 
-A navegação principal tem quatro áreas. **Início** reúne as métricas, **Jogos** reúne biblioteca, sessões e FPS, **Capturas** concentra gravação, clipes, prints e galeria, e **Ferramentas** agrupa processos, diagnóstico, rede e armazenamento.
+A janela grande mostra **Início**, **Jogos** e **Capturas** na lateral. O grupo **Ferramentas** dá acesso direto a Processos, Analisar PC, Rede e internet, Armazenamento e Limpeza e duplicados. O painel compacto reúne a navegação em quatro abas.
 
 Em **Configurações → Barra de tarefas → Personalizar barra de tarefas**, escolha a posição, o monitor, a cor e até três indicadores. Ative **Mostrar apenas o ícone da lua** para liberar espaço. A seleção dos cartões do painel é independente da cápsula.
 
-Passe o mouse na cápsula para consultar a prévia. Clique para abrir o menu do LUA sobre a barra e clique de novo para recolhê-lo. O botão de expandir abre a página ativa em uma janela maior. A cápsula ocupa uma faixa livre junto aos controles do Windows e aparece nas capturas do monitor.
+Passe o mouse na cápsula para consultar a prévia sobre a barra. Clique na lua para abrir a janela grande. O modo compacto continua disponível no botão de tamanho da janela e no menu da bandeja. A cápsula ocupa uma faixa livre junto aos controles do Windows e aparece nas capturas do monitor.
 
 Nos cartões, use Volume para controlar a saída padrão do Windows. Para o clima, selecione uma cidade. As condições são consultadas no Open-Meteo. [Open-Meteo](https://open-meteo.com/)
 
