@@ -70,7 +70,7 @@ O LUA identifica o jogo reconhecido em foco e acompanha seu FPS com PresentMon, 
 
 **Ctrl + Espaço** abre e fecha a sobreposição completa por padrão. Métricas no canto, barra centralizada e janelas flutuantes. A Visão geral mostra FPS acima das temperaturas, com a mesma fonte da CPU/GPU. A leitura é um único FPS geral; low, mínimo e máximo são opcionais. Mover widgets e usar seus botões preserva o foco do jogo. Para escrever em campos, ative Digitar explicitamente. Fora da edição, métricas e janelas fixadas permitem cliques através. A barra superior também aparece nos prints. Janela sem bordas costuma ser o modo mais compatível; tela cheia exclusiva pode impedir a exibição.
 
-Analisar PC usa o ícone de atividade. Capturas usa câmera com enquadramento, histórico circular azul e gravação vermelha, como na edição Mac.
+Analisar PC usa o ícone de atividade. Na sobreposição do Windows, Capturas usa câmera com enquadramento, histórico circular violeta e gravação vermelha.
 
 A barra mostra os ícones reais do app e Digitar; feche a sobreposição pelo atalho. Capturas reúne Print, clipe e Gravar, com Ver galeria abaixo.
 
@@ -114,7 +114,7 @@ RPCS3, PPSSPP, Ryujinx, Cemu e mGBA têm reconhecimento automático em formatos 
 
 ### Barra de tarefas e painel do LUA
 
-A janela grande mostra **Início**, **Jogos** e **Galeria** na lateral. O grupo **Ferramentas** dá acesso direto a Processos, Analisar PC, Rede e internet, Armazenamento e Limpeza e duplicados. O painel compacto reúne a navegação em quatro abas.
+A janela grande mostra **Início**, **Jogos** e **Galeria** na lateral. O grupo **Ferramentas** dá acesso direto a Processos, Analisar PC, Rede e internet, Armazenamento e Limpeza. A largura da lateral acompanha o tamanho da janela e se mantém ao trocar de página. O painel compacto reúne a navegação em quatro abas.
 
 Arraste as bordas ou os cantos da janela grande para redimensionar. No cabeçalho, use minimizar, maximizar ou restaurar. O duplo clique no cabeçalho também alterna entre maximizar e restaurar.
 
@@ -134,7 +134,9 @@ Tráfego de recebimento e envio, interfaces disponíveis, detalhes da conexão e
 
 ### Armazenamento, limpeza e diagnóstico
 
-Veja o espaço livre e analise pastas, arquivos grandes, temporários antigos e duplicados por conteúdo. A limpeza permite selecionar os itens, marcar tudo e revisar antes de enviar à Lixeira. O diagnóstico reúne dados de memória, processador, rede e discos, com exportação de relatório. Uma leitura isolada não determina um defeito e a análise não substitui testes físicos do hardware.
+Veja o espaço livre e analise pastas, arquivos grandes, temporários antigos e duplicados por conteúdo. A limpeza permite selecionar os itens, marcar tudo e revisar antes de enviar à Lixeira.
+
+**Analisar PC** mostra os pontos de atenção da leitura atual e as métricas de CPU, GPU e memória. Consulte armazenamento por unidade, tráfego de rede, inventário e estado dos sensores. **Atualizar diagnóstico** solicita nova coleta. **Exportar relatório** salva as leituras e o inventário em um arquivo de texto.
 
 ![Armazenamento com espaço livre e análise de uma pasta de exemplo](https://onekaer.github.io/lua-/assets/armazenamento.png?v=1.12.0)
 
@@ -146,7 +148,7 @@ Veja o espaço livre e analise pastas, arquivos grandes, temporários antigos e 
 
 ### Configurações e atualizações
 
-A engrenagem reúne preferências gerais, barra de tarefas, sobreposição, captura, sensores e atualizações. Atualizações ficam no último grupo, junto de Sobre o LUA. Uma versão nova gera notificação e botão azul Atualizar ao lado das Configurações no painel grande ou pequeno no rodapé compacto. Instalar automaticamente é opcional. O atalho de desktop é criado na primeira abertura e pode ser recriado nessa seção.
+A engrenagem reúne preferências gerais, barra de tarefas, sobreposição, captura, sensores e atualizações. Atualizações ficam no último grupo, junto de Sobre o LUA. Uma versão nova gera notificação e botão roxo Atualizar ao lado das Configurações no painel grande ou pequeno no rodapé compacto. Instalar automaticamente é opcional. O atalho de desktop é criado na primeira abertura e pode ser recriado nessa seção.
 
 ![Parte final das Configurações: atualização, informações do LUA e atalho de desktop](https://onekaer.github.io/lua-/assets/configuracoes.png?v=1.12.0)
 
