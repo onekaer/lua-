@@ -88,9 +88,9 @@ Print, gravação comum, áudio/microfone e salvamento do histórico anterior ao
 
 ### Galeria
 
-Vídeos, clipes e prints em áreas separadas. Busque, ordene por data, abra a mídia no player, corte trechos, mostre na pasta ou exclua após revisão. As mídias de demonstração da imagem mostram somente a interface do LUA.
+Abra a Galeria diretamente pelo menu para ver prints, clipes e gravações na mesma grade. Busque pelo nome do arquivo ou pela etiqueta do jogo, filtre por tipo, período ou favoritos e abra as miniaturas no visualizador. O menu de cada arquivo permite renomear, mostrar na pasta ou enviar à Lixeira. Use **Nova captura** no cabeçalho para gravar, tirar print, salvar clipe ou abrir os ajustes.
 
-![Galeria com filtros, miniaturas e ações Mostrar na pasta e Excluir](https://onekaer.github.io/lua-/assets/galeria.png?v=1.12.0)
+![Galeria com busca, filtros e miniaturas de capturas demonstrativas](https://onekaer.github.io/lua-/assets/galeria.png?v=1.12.0)
 
 ### Jogos instalados
 
@@ -114,7 +114,7 @@ RPCS3, PPSSPP, Ryujinx, Cemu e mGBA têm reconhecimento automático em formatos 
 
 ### Barra de tarefas e painel do LUA
 
-A janela grande mostra **Início**, **Jogos** e **Capturas** na lateral. O grupo **Ferramentas** dá acesso direto a Processos, Analisar PC, Rede e internet, Armazenamento e Limpeza e duplicados. O painel compacto reúne a navegação em quatro abas.
+A janela grande mostra **Início**, **Jogos** e **Galeria** na lateral. O grupo **Ferramentas** dá acesso direto a Processos, Analisar PC, Rede e internet, Armazenamento e Limpeza e duplicados. O painel compacto reúne a navegação em quatro abas.
 
 Arraste as bordas ou os cantos da janela grande para redimensionar. No cabeçalho, use minimizar, maximizar ou restaurar. O duplo clique no cabeçalho também alterna entre maximizar e restaurar.
 
