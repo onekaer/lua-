@@ -96,13 +96,15 @@ Vídeos, clipes e prints em áreas separadas. Busque, ordene por data, abra a m�
 
 A biblioteca abre em grade com pôsteres verticais 2:3 e aceita visualização em lista. Usa capas oficiais quando disponíveis e mantém a arte horizontal inteira. Busca, filtros, Explorar e troca de capa ficam na biblioteca. A desinstalação pede confirmação e depende da plataforma; pastas portáteis podem ser adicionadas manualmente.
 
+Passe o mouse nas capas para aproximar a arte e clique para ver as horas registradas no PC e por conta. **Sessões** mostra capas ao lado dos jogos, com filtros de jogo e período. **Continuar jogando** fica no fim do Início e oferece **Jogar** quando o LUA conhece um caminho de abertura do jogo. A aba FPS mostra as leituras disponíveis da sessão em execução.
+
 ![Biblioteca de jogos com horas, tamanhos e pesquisa, usando dados demonstrativos](https://onekaer.github.io/lua-/assets/jogos.png?v=1.12.0)
 
 ### Horas jogadas e contas
 
 O LUA acompanha jogos reconhecidos em execução, inclusive quando abertos por outros launchers, atalhos ou executáveis. Mantenha o aplicativo aberto, inclusive na bandeja. Use **Adicionar executável / emulador** para jogos portáteis ou instalados pelo Hydra. A biblioteca exibe sessão atual, total por jogo, histórico e ordenação por horas.
 
-**Steam deste PC** lê as horas locais das contas para jogos instalados identificados. **Importar conta Steam** consulta a Web API com SteamID64 e chave pessoal temporária. As outras plataformas permitem informar horas por conta ou importar um JSON revisado. Login e importação remota de horas de Xbox, Epic, Battle.net, Riot, EA, Ubisoft e Rockstar ainda não estão integrados.
+**Steam deste PC** lê as horas locais das contas para jogos instalados identificados. **Importar conta Steam** consulta a Web API com SteamID64 e chave pessoal temporária. Para outras plataformas, informe horas por conta ou importe um arquivo CSV ou JSON. A tela de revisão aparece antes de salvar. Login e importação remota de horas de Xbox, Epic, Battle.net, Riot, EA, Ubisoft e Rockstar ainda não estão integrados.
 
 RPCS3, PPSSPP, Ryujinx, Cemu e mGBA têm reconhecimento automático em formatos de janela suportados. Outros emuladores podem ser cadastrados por executável e identificador exibido na janela. O acompanhamento mede o tempo em execução, incluindo pausas dentro do jogo. Leia o guia HORAS-JOGADAS.md incluído no pacote para importação, consolidação e limites.
 
@@ -111,6 +113,8 @@ RPCS3, PPSSPP, Ryujinx, Cemu e mGBA têm reconhecimento automático em formatos 
 ### Barra de tarefas e painel do LUA
 
 A janela grande mostra **Início**, **Jogos** e **Capturas** na lateral. O grupo **Ferramentas** dá acesso direto a Processos, Analisar PC, Rede e internet, Armazenamento e Limpeza e duplicados. O painel compacto reúne a navegação em quatro abas.
+
+Arraste as bordas ou os cantos da janela grande para redimensionar. No cabeçalho, use minimizar, maximizar ou restaurar. O duplo clique no cabeçalho também alterna entre maximizar e restaurar.
 
 Em **Configurações → Barra de tarefas → Personalizar barra de tarefas**, escolha a posição, o monitor, a cor e até três indicadores. Ative **Mostrar apenas o ícone da lua** para liberar espaço. A seleção dos cartões do painel é independente da cápsula.
 
