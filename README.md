@@ -94,7 +94,9 @@ Vídeos, clipes e prints em áreas separadas. Busque, ordene por data, abra a m�
 
 ### Jogos instalados
 
-A biblioteca abre em grade com pôsteres verticais 2:3 e aceita visualização em lista. Usa capas oficiais quando disponíveis e mantém a arte horizontal inteira. Busca, filtros, Explorar e troca de capa ficam na biblioteca. A desinstalação pede confirmação e depende da plataforma; pastas portáteis podem ser adicionadas manualmente.
+A tela Jogos reúne as abas **Biblioteca**, **Sessões** e **FPS**. O cabeçalho dá acesso a **Importar horas** e **Adicionar jogo**. A biblioteca destaca o jogo mais recente e mostra o total da coleção, com busca, filtro de plataforma, ordenação e alternância entre grade e lista.
+
+A grade usa pôsteres verticais 2:3 e mantém a arte horizontal inteira quando a capa vertical está indisponível. Abra os detalhes de um jogo para explorar a pasta e trocar a capa. A desinstalação pede confirmação e depende da plataforma. Pastas portáteis podem ser adicionadas manualmente.
 
 Passe o mouse nas capas para aproximar a arte e clique para ver as horas registradas no PC e por conta. **Sessões** mostra capas ao lado dos jogos, com filtros de jogo e período. **Continuar jogando** fica no fim do Início e oferece **Jogar** quando o LUA conhece um caminho de abertura do jogo. A aba FPS mostra as leituras disponíveis da sessão em execução.
 
