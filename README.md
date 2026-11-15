@@ -4,7 +4,7 @@
 
 [Baixar pelo GitHub Releases](https://github.com/onekaer/lua-/releases/latest) · [Histórico de versões](https://github.com/onekaer/lua-/releases) · [Canal do atualizador](https://github.com/onekaer/lua-/releases/latest/download/LUA-atualizacoes.json)
 
-**Windows 10/11 x64 · Em beta · Versão atual: 1.11.0**
+**Windows 10/11 x64 · Em beta · Versão atual: 1.12.0**
 
 O app está em desenvolvimento. Sensores, captura de FPS e sobreposições dependem do hardware, das permissões e do jogo. A versão atual ainda não possui assinatura digital de um editor reconhecido e pode receber um aviso do SmartScreen. Veja [distribuição e assinatura](DISTRIBUICAO.md).
 
@@ -50,87 +50,113 @@ Indicador visível no monitor e excluído do fluxo de captura do LUA. A prévia 
 
 ### Início e hardware
 
+A Visão geral reúne CPU, GPU e RAM em um gráfico com até 60 leituras. No painel ampliado, use a busca da barra lateral para encontrar páginas.
+
+![Visão geral do LUA 1.12.0 com dados demonstrativos](https://onekaer.github.io/lua-/assets/visao-geral.png?v=1.12.0)
+
+Os números das prévias da edição Windows são demonstrativos.
+
 Painel compacto com CPU, GPU, memória, temperaturas disponíveis, rede e espaço livre. Expanda quando quiser mais detalhes ou personalize a barra de abas nas Configurações. A leitura de CPU pode exigir o driver oficial PawnIO e permissão específica para o assistente de sensores.
 
-<img src="https://onekaer.github.io/lua-/assets/inicio.png?v=1.10.5" alt="Início compacto do LUA com temperaturas, hardware e espaço livre" width="340">
+<img src="https://onekaer.github.io/lua-/assets/inicio.png?v=1.12.0" alt="Início compacto do LUA com temperaturas, hardware e espaço livre" width="340">
 
 ### FPS e fluidez
 
 O LUA identifica o jogo reconhecido em foco e acompanha seu FPS com PresentMon, sem uma lista de processos ou botão para iniciar manualmente. Jogos portáteis podem ser adicionados pela pasta da biblioteca. Na imagem, não há jogo ativo: valores ausentes aparecem como `—`. Em Métricas e detecção, escolha 1% low, mínimo e máximo. Mínimo/máximo são as menores/maiores médias de 2 s da sessão; 1% low usa até 600 frames dos últimos 10 s, com mínimo de 100 frames. A presença de uma DLL não confirma DLSS ativo; a comparação com e sem DLSS é manual.
 
-![Página Jogos e FPS com detecção automática, frametime, low, mínimo e máximo](https://onekaer.github.io/lua-/assets/fps.png?v=1.10.5)
+![Página Jogos e FPS com detecção automática, frametime, low, mínimo e máximo](https://onekaer.github.io/lua-/assets/fps.png?v=1.12.0)
 
 ### Sobreposição durante o jogo
 
 **Ctrl + Espaço** abre e fecha a sobreposição completa por padrão. Métricas no canto, barra centralizada e janelas flutuantes. A Visão geral mostra FPS acima das temperaturas, com a mesma fonte da CPU/GPU. A leitura é um único FPS geral; low, mínimo e máximo são opcionais. Mover widgets e usar seus botões preserva o foco do jogo. Para escrever em campos, ative Digitar explicitamente. Fora da edição, métricas e janelas fixadas permitem cliques através. A barra superior também aparece nos prints. Janela sem bordas costuma ser o modo mais compatível; tela cheia exclusiva pode impedir a exibição.
 
-Analisar PC usa o ícone de atividade. Capturas usa câmera com enquadramento, histórico circular azul e gravação vermelha, como na edição Mac.
+Analisar PC usa o ícone de atividade. Na sobreposição do Windows, Capturas usa câmera com enquadramento, histórico circular violeta e gravação vermelha.
 
 A barra mostra os ícones reais do app e Digitar; feche a sobreposição pelo atalho. Capturas reúne Print, clipe e Gravar, com Ver galeria abaixo.
 
-![Barra real da sobreposição do LUA](https://onekaer.github.io/lua-/assets/barra.png?v=1.10.5)
+![Barra real da sobreposição do LUA](https://onekaer.github.io/lua-/assets/barra.png?v=1.12.0)
 
 <img src="https://onekaer.github.io/lua-/assets/sobreposicao.png?v=1.10.5" alt="Sobreposição real de hardware; FPS sem captura ativa aparece como traço" width="300">
 
-<img src="https://onekaer.github.io/lua-/assets/inicio-sobreposicao.png?v=1.10.5" alt="Visão geral da sobreposição com FPS acima das temperaturas da CPU e GPU" width="340">
+<img src="https://onekaer.github.io/lua-/assets/inicio-sobreposicao.png?v=1.12.0" alt="Visão geral da sobreposição com FPS acima das temperaturas da CPU e GPU" width="340">
 
 ### Capturas e clipes retroativos
 
 Print, gravação comum, áudio/microfone e salvamento do histórico anterior ao clique. Escolha atalhos, qualidade e duração. O buffer precisa estar ativo antes do acontecimento e usa recursos de captura. A gravação comum tem indicador e botão Parar; salvar um clipe usa o histórico existente.
 
-<img src="https://onekaer.github.io/lua-/assets/captura.png?v=1.10.5" alt="Janela compacta de captura com print, clipe, gravação e galeria" width="380">
+<img src="https://onekaer.github.io/lua-/assets/captura.png?v=1.12.0" alt="Janela compacta de captura com print, clipe, gravação e galeria" width="380">
 
 ### Galeria
 
-Vídeos, clipes e prints em áreas separadas. Busque, ordene por data, abra a mídia no player, corte trechos, mostre na pasta ou exclua após revisão. As mídias de demonstração da imagem mostram somente a interface do LUA.
+Abra a Galeria diretamente pelo menu para ver prints, clipes e gravações na mesma grade. Busque pelo nome do arquivo ou pela etiqueta do jogo, filtre por tipo, período ou favoritos e abra as miniaturas no visualizador. O menu de cada arquivo permite renomear, mostrar na pasta ou enviar à Lixeira. Use **Nova captura** no cabeçalho para gravar, tirar print, salvar clipe ou abrir os ajustes.
 
-![Galeria com filtros, miniaturas e ações Mostrar na pasta e Excluir](https://onekaer.github.io/lua-/assets/galeria.png?v=1.10.5)
+![Galeria com busca, filtros e miniaturas de capturas demonstrativas](https://onekaer.github.io/lua-/assets/galeria.png?v=1.12.0)
 
 ### Jogos instalados
 
-Grade como padrão, com alternativa em lista. Capas oficiais quando disponíveis, busca, filtros por plataforma e tamanho, Explorar e opções de capa no menu. A desinstalação pede confirmação e depende da plataforma; pastas portáteis podem ser adicionadas manualmente.
+A tela Jogos reúne as abas **Biblioteca**, **Sessões** e **FPS**. O cabeçalho dá acesso a **Importar horas** e **Adicionar jogo**. A biblioteca destaca o jogo mais recente e mostra o total da coleção, com busca, filtro de plataforma, ordenação e alternância entre grade e lista.
 
-![Biblioteca de jogos com capas reais, plataformas, tamanhos e pesquisa](https://onekaer.github.io/lua-/assets/jogos.png?v=1.10.5)
+A grade usa pôsteres verticais 2:3 e mantém a arte horizontal inteira quando a capa vertical está indisponível. Abra os detalhes de um jogo para explorar a pasta e trocar a capa. A desinstalação pede confirmação e depende da plataforma. Pastas portáteis podem ser adicionadas manualmente.
+
+Passe o mouse nas capas para aproximar a arte e clique para ver as horas registradas no PC e por conta. **Sessões** mostra capas ao lado dos jogos, com filtros de jogo e período. **Continuar jogando** fica no fim do Início e oferece **Jogar** quando o LUA conhece um caminho de abertura do jogo. A aba FPS mostra as leituras disponíveis da sessão em execução.
+
+![Biblioteca de jogos com horas, tamanhos e pesquisa, usando dados demonstrativos](https://onekaer.github.io/lua-/assets/jogos.png?v=1.12.0)
 
 ### Horas jogadas e contas
 
 O LUA acompanha jogos reconhecidos em execução, inclusive quando abertos por outros launchers, atalhos ou executáveis. Mantenha o aplicativo aberto, inclusive na bandeja. Use **Adicionar executável / emulador** para jogos portáteis ou instalados pelo Hydra. A biblioteca exibe sessão atual, total por jogo, histórico e ordenação por horas.
 
-**Steam deste PC** lê as horas locais das contas para jogos instalados identificados. **Importar conta Steam** consulta a Web API com SteamID64 e chave pessoal temporária. As outras plataformas permitem informar horas por conta ou importar um JSON revisado. Login e importação remota de horas de Xbox, Epic, Battle.net, Riot, EA, Ubisoft e Rockstar ainda não estão integrados.
+**Steam deste PC** lê as horas locais das contas para jogos instalados identificados. **Importar conta Steam** consulta a Web API com SteamID64 e chave pessoal temporária. Para outras plataformas, informe horas por conta ou importe um arquivo CSV ou JSON. A tela de revisão aparece antes de salvar. Login e importação remota de horas de Xbox, Epic, Battle.net, Riot, EA, Ubisoft e Rockstar ainda não estão integrados.
 
 RPCS3, PPSSPP, Ryujinx, Cemu e mGBA têm reconhecimento automático em formatos de janela suportados. Outros emuladores podem ser cadastrados por executável e identificador exibido na janela. O acompanhamento mede o tempo em execução, incluindo pausas dentro do jogo. Leia o guia HORAS-JOGADAS.md incluído no pacote para importação, consolidação e limites.
 
-![Interface de horas jogadas do LUA com dados demonstrativos](https://onekaer.github.io/lua-/assets/horas.png?v=1.11.0)
+![Interface de horas jogadas do LUA com dados demonstrativos](https://onekaer.github.io/lua-/assets/horas.png?v=1.12.0)
+
+### Barra de tarefas e painel do LUA
+
+A janela grande mostra **Início**, **Jogos** e **Galeria** na lateral. O grupo **Ferramentas** dá acesso direto a Processos, Analisar PC, Rede e internet, Armazenamento e Limpeza. A largura da lateral acompanha o tamanho da janela e se mantém ao trocar de página. O painel compacto reúne a navegação em quatro abas.
+
+Arraste as bordas ou os cantos da janela grande para redimensionar. No cabeçalho, use minimizar, maximizar ou restaurar. O duplo clique no cabeçalho também alterna entre maximizar e restaurar.
+
+Em **Configurações → Barra de tarefas → Personalizar barra de tarefas**, escolha a posição, o monitor, a cor e até três indicadores. Ative **Mostrar apenas o ícone da lua** para liberar espaço. A seleção dos cartões do painel é independente da cápsula.
+
+Passe o mouse na cápsula para consultar a prévia sobre a barra. Clique na lua para abrir o menu compacto junto à barra e clique de novo para recolhê-lo. O botão de modo alterna entre o painel compacto e a janela grande. O quadrado maximiza a janela ou restaura o tamanho anterior. A cápsula ocupa uma faixa livre junto aos controles do Windows e aparece nas capturas do monitor.
+
+Nos cartões, use Volume para controlar a saída padrão do Windows. Para o clima, selecione uma cidade. As condições são consultadas no Open-Meteo. [Open-Meteo](https://open-meteo.com/)
+
+<img src="https://onekaer.github.io/lua-/assets/widget-barra.png?v=1.12.0" width="340" alt="Widget expandido do LUA com dados demonstrativos">
 
 ### Rede e teste de internet
 
 Tráfego de recebimento e envio, interfaces disponíveis, detalhes da conexão e teste de download, upload e latência. O teste de velocidade utiliza dados de teste da Cloudflare.
 
-![Rede e teste de velocidade na interface do LUA](https://onekaer.github.io/lua-/assets/rede.png?v=1.10.5)
+![Rede e teste de velocidade na interface do LUA](https://onekaer.github.io/lua-/assets/rede.png?v=1.12.0)
 
 ### Armazenamento, limpeza e diagnóstico
 
-Veja o espaço livre e analise pastas, arquivos grandes, temporários antigos e duplicados por conteúdo. A limpeza permite selecionar os itens, marcar tudo e revisar antes de enviar à Lixeira. O diagnóstico reúne dados de memória, processador, rede e discos, com exportação de relatório. Uma leitura isolada não determina um defeito e a análise não substitui testes físicos do hardware.
+Veja o espaço livre e analise pastas, arquivos grandes, temporários antigos e duplicados por conteúdo. A limpeza permite selecionar os itens, marcar tudo e revisar antes de enviar à Lixeira.
 
-![Armazenamento com espaço livre e análise de uma pasta de exemplo](https://onekaer.github.io/lua-/assets/armazenamento.png?v=1.10.5)
+**Analisar PC** mostra os pontos de atenção da leitura atual e as métricas de CPU, GPU e memória. Consulte armazenamento por unidade, tráfego de rede, inventário e estado dos sensores. **Atualizar diagnóstico** solicita nova coleta. **Exportar relatório** salva as leituras e o inventário em um arquivo de texto.
 
-![Limpeza e duplicados antes da análise, com pasta de exemplo](https://onekaer.github.io/lua-/assets/limpeza.png?v=1.10.5)
+![Armazenamento com espaço livre e análise de uma pasta de exemplo](https://onekaer.github.io/lua-/assets/armazenamento.png?v=1.12.0)
+
+![Limpeza e duplicados antes da análise, com pasta de exemplo](https://onekaer.github.io/lua-/assets/limpeza.png?v=1.12.0)
 
 *As imagens de armazenamento/limpeza usam C:\Exemplo e não mostram arquivos pessoais.*
 
-![Diagnóstico local do LUA com memória, CPU, espaço livre e conexão](https://onekaer.github.io/lua-/assets/analise.png?v=1.10.5)
+![Diagnóstico local do LUA com memória, CPU, espaço livre e conexão](https://onekaer.github.io/lua-/assets/analise.png?v=1.12.0)
 
 ### Configurações e atualizações
 
-Seções retráteis para navegação, sobreposições e atalhos. Atualizações ficam no último grupo, junto de Sobre o LUA. Uma versão nova gera notificação e botão azul Atualizar ao lado das Configurações no painel grande ou pequeno no rodapé compacto. Instalar automaticamente é opcional. O atalho de desktop é criado na primeira abertura e pode ser recriado nessa seção.
+A engrenagem reúne preferências gerais, barra de tarefas, sobreposição, captura, sensores e atualizações. Atualizações ficam no último grupo, junto de Sobre o LUA. Uma versão nova gera notificação e botão roxo Atualizar ao lado das Configurações no painel grande ou pequeno no rodapé compacto. Instalar automaticamente é opcional. O atalho de desktop é criado na primeira abertura e pode ser recriado nessa seção.
 
-![Parte final das Configurações: atualização, informações do LUA e atalho de desktop](https://onekaer.github.io/lua-/assets/configuracoes.png?v=1.10.5)
+![Parte final das Configurações: atualização, informações do LUA e atalho de desktop](https://onekaer.github.io/lua-/assets/configuracoes.png?v=1.12.0)
 
 ## Instalar
 
 Windows 10/11 x64 com .NET Framework 4.8. Baixe o ZIP completo, extraia toda a pasta e abra `LUA.exe`; o atalho é criado na Área de Trabalho. Se uma versão antiga ainda estiver aberta, use Sair na bandeja antes de abrir a pasta nova, ou utilize o atualizador do próprio app. Mantenha bibliotecas, ícones e ferramentas juntos. Para atualizar uma versão antiga sem canal configurado, use Sair na bandeja antes de abrir a nova.
 
-CPU: instale o PawnIO oficial quando necessário. Em Configurações > Temperatura da CPU e permissões > Configurar leitura da CPU, escolha Ativar leitura permanente. Autorize a instalação do serviço uma vez; depois ele inicia com o Windows. É opcional e removível. Sem serviço, a leitura elevada exige ação manual, sem avisos automáticos ao iniciar. Reparar o serviço ou instalar o driver pode pedir nova autorização. FPS: abra um jogo reconhecido da biblioteca e aceite a permissão de LuaFpsCapture.exe quando solicitada. Cancelar não causa pedidos repetidos: use Reativar detecção de FPS para tentar novamente. A presença de DLL de DLSS não confirma a tecnologia ativa; a comparação disponível é manual.
+CPU: instale o PawnIO oficial quando necessário. Em Configurações > Avançado > Temperatura da CPU e permissões > Configurar leitura da CPU, escolha Ativar leitura permanente. Autorize a instalação do serviço uma vez; depois ele inicia com o Windows. É opcional e removível. Sem serviço, a leitura elevada exige ação manual, sem avisos automáticos ao iniciar. Reparar o serviço ou instalar o driver pode pedir nova autorização. FPS: abra um jogo reconhecido da biblioteca e aceite a permissão de LuaFpsCapture.exe quando solicitada. Cancelar não causa pedidos repetidos: use Reativar detecção de FPS para tentar novamente. A presença de DLL de DLSS não confirma a tecnologia ativa; a comparação disponível é manual.
 
 O buffer só guarda o que ocorreu enquanto estava ativo e consome recursos de captura. Clipes podem terminar cerca de 1 s antes do clique porque o último segmento aberto é excluído. Tela cheia exclusiva pode impedir a sobreposição; prefira janela sem bordas.
 
